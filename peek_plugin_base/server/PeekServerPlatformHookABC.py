@@ -1,7 +1,7 @@
 from abc import abstractproperty
 
-from papp_base.PeekPlatformCommonHookABC import PeekPlatformCommonHookABC
-from papp_base.PeekPlatformFrontendHookABC import PeekPlatformFrontendHookABC
+from peek_plugin_base.PeekPlatformCommonHookABC import PeekPlatformCommonHookABC
+from peek_plugin_base.PeekPlatformFrontendHookABC import PeekPlatformFrontendHookABC
 
 
 class PeekServerPlatformHookABC(PeekPlatformCommonHookABC, PeekPlatformFrontendHookABC):

@@ -7,17 +7,17 @@ set -x
 
 echo "start version is $VER"
 
-PAPP_NAME='papp_noop'
+PLUGIN_NAME='plugin_noop'
 
 BUILD="${BUILD}"
 VER="${VER}"
 DATE="`date --utc`"
 
 if [ "${VER}" != '${bamboo.jira.version}' ]; then
-    TAR_DIR="${PAPP_NAME}_$VER"
+    TAR_DIR="${PLUGIN_NAME}_$VER"
 else
     VER="b`date +%y%m%d.%H%M`"
-    TAR_DIR="${PAPP_NAME}_$VER#$BUILD"
+    TAR_DIR="${PLUGIN_NAME}_$VER#$BUILD"
 fi
 
 DIR="deploy/$TAR_DIR"
@@ -33,10 +33,10 @@ cp peek_agent_pof/src/run_peek_agent.py $DIR/run_agent.py
 
 
 # Source
-cp -pr papp_base/src/peek_agent $DIR
-cp -pr ${PAPP_NAME}/src/${PAPP_NAME} $DIR
-cp -pr ${PAPP_NAME}/papp_changelog.txt $DIR
-cp -pr ${PAPP_NAME}/papp_version.txt $DIR
+cp -pr plugin_base/src/peek_agent $DIR
+cp -pr ${PLUGIN_NAME}/src/${PLUGIN_NAME} $DIR
+cp -pr ${PLUGIN_NAME}/plugin_changelog.txt $DIR
+cp -pr ${PLUGIN_NAME}/plugin_version.txt $DIR
 
 
 find $DIR -iname .git -exec rm -rf {} \; || true
@@ -51,14 +51,14 @@ find $DIR -iname ".idea" -exec rm -rf {} \; || true
 
 # Apply version number
 
-for f in `grep -l -r  '#PAPP_VER#' .`; do
+for f in `grep -l -r  '#PLUGIN_VER#' .`; do
     echo "Updating version in file $f"
-    sed -i "s/#PAPP_VER#/$VER/g" $f
+    sed -i "s/#PLUGIN_VER#/$VER/g" $f
 done
 
-for f in `grep -l -r  '#PAPP_BUILD#' .`; do
+for f in `grep -l -r  '#PLUGIN_BUILD#' .`; do
     echo "Updating build in file $f"
-    sed -i "s/#PAPP_BUILD#/$BUILD/g" $f
+    sed -i "s/#PLUGIN_BUILD#/$BUILD/g" $f
 done
 
 for f in `grep -l -r  '#BUILD_DATE#' .`; do

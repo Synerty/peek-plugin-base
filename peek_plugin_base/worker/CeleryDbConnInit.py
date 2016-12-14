@@ -4,8 +4,8 @@ import logging
 from celery.signals import worker_process_init, worker_process_shutdown, worker_init, \
     task_postrun
 
-from papp_base.worker import CeleryDbConn
-from papp_base.worker.CeleryDbConn import getDbSession
+from peek_plugin_base.worker import CeleryDbConn
+from peek_plugin_base.worker.CeleryDbConn import getDbSession
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ def initWorkerProcessDbConn(**kwargs):
 
     # The next call to CeleryDbConn.dbEngine property will create a new engine
     # with this connection string
-    from papp_base.worker import CeleryDbConn
+    from peek_plugin_base.worker import CeleryDbConn
     CeleryDbConn = importlib.reload(CeleryDbConn)
 
     CeleryDbConn._dbConnectString = __WorkerInit.dbConnectString

@@ -5,20 +5,20 @@ from sqlalchemy import MetaData
 from sqlalchemy.orm.session import Session
 
 from jsoncfg.value_mappers import require_string
-from papp_base.PappCommonEntryHookABC import PappCommonEntryHookABC
-from papp_base.server.PeekServerPlatformHookABC import PeekServerPlatformHookABC
-from papp_base.storage.DbConnection import DbConnection
+from peek_plugin_base.PluginCommonEntryHookABC import PluginCommonEntryHookABC
+from peek_plugin_base.server.PeekServerPlatformHookABC import PeekServerPlatformHookABC
+from peek_plugin_base.storage.DbConnection import DbConnection
 
 
-class PappServerEntryHookABC(PappCommonEntryHookABC):
-    def __init__(self, pappName: str, pappRootDir: str, platform: PeekServerPlatformHookABC):
-        PappCommonEntryHookABC.__init__(self, pappName=pappName, pappRootDir=pappRootDir)
+class PluginServerEntryHookABC(PluginCommonEntryHookABC):
+    def __init__(self, pluginName: str, pluginRootDir: str, platform: PeekServerPlatformHookABC):
+        PluginCommonEntryHookABC.__init__(self, pluginName=pluginName, pluginRootDir=pluginRootDir)
         self._platform = platform
 
     def migrateStorageSchema(self, metadata: MetaData) -> None:
         """ Initialise the DB
 
-        :param metadata: the SQLAlchemy metadata for this papps schema
+        :param metadata: the SQLAlchemy metadata for this plugins schema
 
         """
 
@@ -44,21 +44,21 @@ class PappServerEntryHookABC(PappCommonEntryHookABC):
         return self._dbConn.ormSession()
 
     @property
-    def publishedServerApi(self, requestingPappName: str) -> Optional[object]:
+    def publishedServerApi(self, requestingPluginName: str) -> Optional[object]:
         """ Published Server API
 
-        :param requestingPappName: The name of the peek app requesting the API
+        :param requestingPluginName: The name of the peek app requesting the API
 
-        :return  class that implements the API that can be used by other PAPPs on this
+        :return  class that implements the API that can be used by other PLUGINs on this
         platform.
         """
         return None
 
     @property
-    def publishedStorageApi(self, requestingPappName: str) -> Optional[object]:
+    def publishedStorageApi(self, requestingPluginName: str) -> Optional[object]:
         """ Published Storage API
 
-        :param requestingPappName: The name of the peek app requesting the API
+        :param requestingPluginName: The name of the peek app requesting the API
 
         :return An object implementing an API that may be used by other apps in
         the platform.
@@ -81,7 +81,7 @@ class PappServerEntryHookABC(PappCommonEntryHookABC):
 
         :return: The absolute path of the Angular2 app directory.
         """
-        relDir = self._packageCfg.config.papp.title(require_string)
-        dir = os.path.join(self._pappRoot, relDir)
+        relDir = self._packageCfg.config.plugin.title(require_string)
+        dir = os.path.join(self._pluginRoot, relDir)
         if not os.path.isdir(dir): raise NotADirectoryError(dir)
         return dir

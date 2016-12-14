@@ -2,13 +2,13 @@ from abc import abstractproperty
 
 from celery.app.base import Celery
 
-from papp_base.PappCommonEntryHookABC import PappCommonEntryHookABC
-from papp_base.worker.PeekWorkerPlatformHookABC import PeekWorkerPlatformHookABC
+from peek_plugin_base.PluginCommonEntryHookABC import PluginCommonEntryHookABC
+from peek_plugin_base.worker.PeekWorkerPlatformHookABC import PeekWorkerPlatformHookABC
 
 
-class PappWorkerEntryHookABC(PappCommonEntryHookABC):
-    def __init__(self, pappName: str, pappRootDir: str, platform: PeekWorkerPlatformHookABC):
-        PappCommonEntryHookABC.__init__(self, pappName=pappName, pappRootDir=pappRootDir)
+class PluginWorkerEntryHookABC(PluginCommonEntryHookABC):
+    def __init__(self, pluginName: str, pluginRootDir: str, platform: PeekWorkerPlatformHookABC):
+        PluginCommonEntryHookABC.__init__(self, pluginName=pluginName, pluginRootDir=pluginRootDir)
         self._platform = platform
 
 
@@ -17,7 +17,7 @@ class PappWorkerEntryHookABC(PappCommonEntryHookABC):
         """ Celery App Includes
 
         This property returns the absolout package paths to the modules with the tasks
-        :Example: ["papp_noop.worker.NoopWorkerTask"]
+        :Example: ["plugin_noop.worker.NoopWorkerTask"]
 
         :return: A list of package+module names that Celery should import.
 

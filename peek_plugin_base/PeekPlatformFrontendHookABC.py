@@ -11,9 +11,9 @@ class PeekPlatformFrontendHookABC(metaclass=ABCMeta):
     def addStaticResourceDir(self, dir: str) -> None:
         self.__rootResource.addFileSystemRoot(dir)
 
-    def addResource(self, pappSubPath: bytes, resource: BasicResource) -> None:
-        pappSubPath = pappSubPath.strip(b'/')
-        self.__rootResource.putChild(pappSubPath, resource)
+    def addResource(self, pluginSubPath: bytes, resource: BasicResource) -> None:
+        pluginSubPath = pluginSubPath.strip(b'/')
+        self.__rootResource.putChild(pluginSubPath, resource)
 
     @property
     def rootResource(self) -> BasicResource:

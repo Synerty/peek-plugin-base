@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PACKAGE="papp_base"
+PACKAGE="peek_plugin_base"
 
 set -o nounset
 set -o errexit

@@ -21,22 +21,22 @@ from jsoncfg.functions import load_config
 logger = logging.getLogger(__name__)
 
 
-class PappPackageFileConfig(object):
+class PluginPackageFileConfig(object):
     """
-    This class helps with accessing the config for the papp_package.json
+    This class helps with accessing the config for the plugin_package.json
     """
 
-    def __init__(self, pappRootDir: str):
+    def __init__(self, pluginRootDir: str):
         """
         Constructor
 
-        :param pappRootDir: The root directory of this package, where papp_package.json
+        :param pluginRootDir: The root directory of this package, where plugin_package.json
         lives.
         """
-        self._pappRoot = pappRootDir
-        if not os.path.isdir(self._pappRoot): raise NotADirectoryError(self._pappRoot)
+        self._pluginRoot = pluginRootDir
+        if not os.path.isdir(self._pluginRoot): raise NotADirectoryError(self._pluginRoot)
 
-        self._configFilePath = os.path.join(pappRootDir, 'papp_package.json')
+        self._configFilePath = os.path.join(pluginRootDir, 'plugin_package.json')
 
         if not os.path.isfile(self._configFilePath):
             assert (not os.path.exists(self._configFilePath))
