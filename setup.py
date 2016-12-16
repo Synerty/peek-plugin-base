@@ -4,7 +4,7 @@ from distutils.core import setup
 
 from setuptools import find_packages
 
-package_name = "peek_plugin_base"
+package_name = "peek-plugin-base"
 package_version = '0.0.6dev123456'
 
 egg_info = "%s.egg-info" % package_name
@@ -19,12 +19,13 @@ requirements = [
     # Celery packages
     "celery",
 
+    # The package for RW support
+    "json-cfg-rw"
+
 ]
 
 # Packages that are presently installed from a git repo
 dependency_links= [
-    # Synerty packages
-    "git+https://github.com/Synerty/json-cfg",  # The file config utility
 ]
 
 setup(
@@ -33,7 +34,7 @@ setup(
     install_requires=requirements,
     dependency_links=dependency_links,
     version=package_version,
-    description='Peek App - Platform API',
+    description='Peek Plugin Base',
     author='Synerty',
     author_email='contact@synerty.com',
     url='https://github.com/Synerty/%s' % package_version,
