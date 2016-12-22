@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 class DbConnection:
     def __init__(self, dbConnectString: str, metadata: MetaData, alembicDir: str,
-                 dbEngineArgs: {} = None,
+                 dbEngineArgs: {}={None},
                  enableForeignKeys=False, enableCreateAll=True):
         """ SQLAlchemy Database Connection
 
