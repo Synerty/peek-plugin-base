@@ -13,6 +13,7 @@ from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from threading import Lock
 from time import sleep
+from typing import Optional, Dict, Union
 
 import sqlalchemy_utils
 from sqlalchemy import create_engine
@@ -27,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 class DbConnection:
     def __init__(self, dbConnectString: str, metadata: MetaData, alembicDir: str,
-                 dbEngineArgs: {}={None},
+                 dbEngineArgs: Optional[Dict[str, Union[str, int]]]=None,
                  enableForeignKeys=False, enableCreateAll=True):
         """ SQLAlchemy Database Connection
 
