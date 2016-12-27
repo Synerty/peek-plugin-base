@@ -15,6 +15,10 @@ class PluginServerEntryHookABC(PluginCommonEntryHookABC):
         PluginCommonEntryHookABC.__init__(self, pluginName=pluginName, pluginRootDir=pluginRootDir)
         self._platform = platform
 
+    @property
+    def platform(self) -> PeekServerPlatformHookABC:
+        return self._platform
+
     def migrateStorageSchema(self, metadata: MetaData) -> None:
         """ Initialise the DB
 
@@ -27,7 +31,8 @@ class PluginServerEntryHookABC(PluginCommonEntryHookABC):
         if not os.path.isdir(alembicDir): raise NotADirectoryError(alembicDir)
 
         self._dbConn = DbConnection(
-            dbConnectString=self.platform.dbConnectString,
+            # Ingore this typing error, it's a bug in pycharm
+            dbConnectString=str(self.platform.dbConnectString),
             metadata=metadata,
             alembicDir=alembicDir
         )

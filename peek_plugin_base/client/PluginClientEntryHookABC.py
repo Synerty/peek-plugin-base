@@ -12,6 +12,10 @@ class PluginClientEntryHookABC(PluginCommonEntryHookABC):
         self._platform = platform
 
     @property
+    def platform(self) -> PeekClientPlatformHookABC:
+        return self._platform
+
+    @property
     def publishedClientApi(self, requestingPluginName: str) -> Optional[object]:
         return None
 
