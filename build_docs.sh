@@ -18,8 +18,7 @@ echo "Removing old documentation in build folder..."
 rm -fr dist/docs/*
 
 echo "Creating Python Path"
-PYTHONPATH="`pwd`"
-export PYTHONPATH
+export PYTHONPATH="`pwd`"
 
 echo "Ensure Sphinx and the theme that Synerty uses is installed..."
 for pkg in sphinx sphinx_rtd_theme; do
@@ -39,5 +38,3 @@ rm -fr docs/peek* docs/modules.rst
 
 echo "Opening created documentation..."
 start dist/docs/index.html
-
-echo $PYTHONPATH
