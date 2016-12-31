@@ -1,9 +1,9 @@
-from abc import ABCMeta, abstractproperty
+from abc import abstractproperty, ABCMeta
 
 from celery.app.base import Celery
 
-class PluginServerWorkerEntryHookMixin:
 
+class PluginServerWorkerEntryHookABC(metaclass=ABCMeta):
     @abstractproperty
     def celeryApp(self) -> Celery:
         """ Celery App

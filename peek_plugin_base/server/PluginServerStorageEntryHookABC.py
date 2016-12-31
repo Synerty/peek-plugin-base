@@ -1,17 +1,15 @@
 import os
-from abc import ABCMeta, abstractproperty
+from abc import ABCMeta
 from typing import Optional
 
 from jsoncfg.value_mappers import require_string
+from peek_plugin_base.storage.DbConnection import DbConnection
 from sqlalchemy import MetaData
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm.session import Session
 
-from peek_plugin_base.storage.DbConnection import DbConnection
 
-
-class PluginServerStorageEntryHookMixin:
-
+class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
     def _migrateStorageSchema(self, metadata: MetaData) -> None:
         """ Initialise the DB
 
@@ -92,4 +90,3 @@ class PluginServerStorageEntryHookMixin:
         the platform.
         """
         return None
-
