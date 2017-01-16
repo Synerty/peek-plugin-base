@@ -13,7 +13,7 @@ from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from threading import Lock
 from time import sleep
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, Callable
 
 import sqlalchemy_utils
 from sqlalchemy import create_engine
@@ -77,11 +77,11 @@ class DbConnection:
         Close all ORM sessions connected to this DB engine.
 
         """
-        self.ormSession()  # Ensure we have a session maker
+        self.dbSessionCreator()  # Ensure we have a session maker
         self._ScopedSession.close_all()
 
     @property
-    def ormSession(self) -> Session:
+    def ormSessionCreator(self) -> Callable[ [ ],Session]:
         """ Get Orm Session
 
         :return: A SQLAlchemy session scoped for the callers thread..
@@ -89,7 +89,7 @@ class DbConnection:
         assert self._dbConnectString
 
         if self._ScopedSession:
-            return self._ScopedSession()
+            return self._ScopedSession
 
         self._dbEngine = create_engine(
             self._dbConnectString,
@@ -99,7 +99,7 @@ class DbConnection:
         self._ScopedSession = scoped_session(
             sessionmaker(bind=self._dbEngine))
 
-        return self._ScopedSession()
+        return self._ScopedSession
 
     @property
     def dbEngine(self) -> Engine:
