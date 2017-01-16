@@ -36,7 +36,7 @@ class AlembicEnvBase:
 
             context.configure(
                 connection=connection,
-                targetMetadata=self._targetMetadata,
+                target_metadata=self._targetMetadata,
                 include_object=self._includeObjectFilter,
                 include_schemas=True,
                 version_table_schema=self._schemaName
