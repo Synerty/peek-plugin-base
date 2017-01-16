@@ -49,10 +49,8 @@ class PluginServerEntryHookABC(PluginCommonEntryHookABC):
         return self._dbConn.ormSession()
 
     @property
-    def publishedServerApi(self, requestingPluginName: str) -> Optional[object]:
+    def publishedServerApi(self) -> Optional[object]:
         """ Published Server API
-
-        :param requestingPluginName: The name of the peek app requesting the API
 
         :return  class that implements the API that can be used by other PLUGINs on this
         platform.
@@ -60,10 +58,8 @@ class PluginServerEntryHookABC(PluginCommonEntryHookABC):
         return None
 
     @property
-    def publishedStorageApi(self, requestingPluginName: str) -> Optional[object]:
+    def publishedStorageApi(self) -> Optional[object]:
         """ Published Storage API
-
-        :param requestingPluginName: The name of the peek app requesting the API
 
         :return An object implementing an API that may be used by other apps in
         the platform.
