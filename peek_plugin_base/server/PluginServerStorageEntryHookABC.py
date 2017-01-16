@@ -1,12 +1,13 @@
 import os
-from abc import ABCMeta
-from typing import Optional
+from abc import ABCMeta, abstractproperty
+from typing import Optional, Callable
 
 from jsoncfg.value_mappers import require_string
-from peek_plugin_base.storage.DbConnection import DbConnection
 from sqlalchemy import MetaData
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm.session import Session
+
+from peek_plugin_base.storage.DbConnection import DbConnection
 
 
 class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
@@ -33,7 +34,7 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
         self._dbConn.migrate()
 
     @property
-    def dbSession(self) -> Session:
+    def dbSessionCreator(self) -> Callable[[], Session]:
         """ Database Session
 
         This is a helper property that can be used by the papp to get easy access to
@@ -42,7 +43,7 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
         :return: An instance of the sqlalchemy ORM session
 
         """
-        return self._dbConn.ormSession()
+        return self._dbConn.ormSessionCreator
 
     @property
     def dbEngine(self) -> Engine:
@@ -56,7 +57,7 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
         """
         return self._dbConn._dbEngine
 
-    @property
+    @abstractproperty
     def dbMetadata(self) -> MetaData:
         """ DB Metadata
 

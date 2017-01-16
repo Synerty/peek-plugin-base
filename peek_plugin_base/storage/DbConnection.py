@@ -119,7 +119,7 @@ class DbConnection:
         Perform a database migration, upgrading to the latest schema level.
         """
 
-        assert self.ormSession
+        assert self.ormSessionCreator, "ormSessionCreator is not defined"
 
         isDbInitialised = self._dbEngine.dialect.has_table(
             self._dbEngine.connect(), 'alembic_version',
