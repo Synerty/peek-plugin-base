@@ -16,6 +16,7 @@ from time import sleep
 from typing import Optional, Dict, Union, Callable
 
 import sqlalchemy_utils
+from pytmpdir.Directory import Directory
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import scoped_session
@@ -213,10 +214,13 @@ class DbConnection:
         cfg %= {'alembicDir': self._alembicDir,
                 'url': self._dbConnectString}
 
-        tempFile = NamedTemporaryFile('w+t')
-        tempFile.write(cfg)
-        tempFile.flush()
-        return tempFile
+        dir = Directory()
+        file = dir.createTempFile()
+
+        with file.open(write=True) as f:
+            f.write(cfg)
+
+        return file.namedTempFileReader()
 
     def _doMigration(self, engine):
         from alembic import command
