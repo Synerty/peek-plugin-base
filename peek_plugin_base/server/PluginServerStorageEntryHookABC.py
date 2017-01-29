@@ -28,7 +28,8 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
         self._dbConn = DbConnection(
             dbConnectString=self.platform.dbConnectString,
             metadata=metadata,
-            alembicDir=alembicDir
+            alembicDir=alembicDir,
+            enableCreateAll=False
         )
 
         self._dbConn.migrate()

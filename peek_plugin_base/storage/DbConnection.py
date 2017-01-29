@@ -18,6 +18,8 @@ from typing import Optional, Dict, Union, Callable
 import sqlalchemy_utils
 from pytmpdir.Directory import Directory
 from sqlalchemy import create_engine
+from sqlalchemy.dialects.mssql.base import MSDialect
+from sqlalchemy.dialects.postgresql.base import PGDialect
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -29,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 class DbConnection:
     def __init__(self, dbConnectString: str, metadata: MetaData, alembicDir: str,
-                 dbEngineArgs: Optional[Dict[str, Union[str, int]]]=None,
+                 dbEngineArgs: Optional[Dict[str, Union[str, int]]] = None,
                  enableForeignKeys=False, enableCreateAll=True):
         """ SQLAlchemy Database Connection
 
@@ -82,7 +84,7 @@ class DbConnection:
         self._ScopedSession.close_all()
 
     @property
-    def ormSessionCreator(self) -> Callable[ [ ],Session]:
+    def ormSessionCreator(self) -> Callable[[], Session]:
         """ Get Orm Session
 
         :return: A SQLAlchemy session scoped for the callers thread..
@@ -188,9 +190,19 @@ class DbConnection:
         command(alembic_cfg, *args)
 
     def _doCreateAll(self, engine):
+        # Ensure the schema exists
+        if isinstance(self._dbEngine.dialect, MSDialect):
+            self._dbEngine.execute(
+                "IF(SCHEMA_ID('%s')IS NULL) BEGIN EXEC('CREATE SCHEMA [%s]')END" % (
+                self._metadata.schema, self._metadata.schema))
 
-        self._dbEngine.execute('CREATE SCHEMA IF NOT EXISTS "%s" '
-                               % self._metadata.schema)
+        elif isinstance(self._dbEngine.dialect, PGDialect):
+            self._dbEngine.execute(
+                'CREATE SCHEMA IF NOT EXISTS "%s" ' % self._metadata.schema)
+
+        else:
+            raise Exception('unknown dialect %s' % self._dbEngine.dialect)
+
         self._metadata.create_all(self._dbEngine)
 
         from alembic import command
@@ -200,6 +212,7 @@ class DbConnection:
         cfg = '''
         [alembic]
         script_location = %(alembicDir)s
+
         sourceless = true
         sqlalchemy.url = %(url)s
 
