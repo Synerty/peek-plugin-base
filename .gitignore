@@ -8,3 +8,4 @@ __pycache__/
 # Sphinx documentation
 docs/peek*
 docs/modules.rst
+MANIFEST

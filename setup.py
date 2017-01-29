@@ -11,6 +11,9 @@ egg_info = "%s.egg-info" % package_name
 if os.path.isdir(egg_info):
     shutil.rmtree(egg_info)
 
+if os.path.isfile('MANIFEST'):
+    os.remove('MANIFEST')
+
 requirements = [
     "SQLAlchemy >= 1.0.14",  # Database abstraction layer
     "SQLAlchemy-Utils >= 0.32.9",
