@@ -5,11 +5,14 @@ from distutils.core import setup
 from setuptools import find_packages
 
 package_name = "peek-plugin-base"
-package_version = '0.0.11'
+package_version = '0.0.19'
 
 egg_info = "%s.egg-info" % package_name
 if os.path.isdir(egg_info):
     shutil.rmtree(egg_info)
+
+if os.path.isfile('MANIFEST'):
+    os.remove('MANIFEST')
 
 requirements = [
     "SQLAlchemy >= 1.0.14",  # Database abstraction layer
