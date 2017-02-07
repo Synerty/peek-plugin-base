@@ -5,7 +5,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 package_name = "peek-plugin-base"
-package_version = '0.0.24'
+package_version = '0.0.25'
 
 egg_info = "%s.egg-info" % package_name
 if os.path.isdir(egg_info):
