@@ -25,9 +25,9 @@
   "client": {
     // The directory where the angular2 route is for the client site
     // EG "frontend/client"
-    "angularFrontendDir": "client_fe",
+    "angularFrontendAppDir": "client_fe",
     // The main module for the angular2 route
-    // This must be in the "angularFrontendDir"
+    // This must be in the "angularFrontendAppDir"
     // EG "plugin-noop.module"
     "angularMainModule": "plugin-noop.module"
   },
@@ -35,9 +35,9 @@
   "server": {
     // The directory where the angular2 route is for server admin site
     // EG "frontend/client"
-    "angularFrontendDir": "server_fe",
+    "angularFrontendAppDir": "server_fe",
     // The main module for the angular2 route
-    // This must be in the "angularFrontendDir"
+    // This must be in the "angularFrontendAppDir"
     // EG "plugin-noop.module"
     "angularMainModule": "plugin-noop.module"
   },
