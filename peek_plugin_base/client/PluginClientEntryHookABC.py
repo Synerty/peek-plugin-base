@@ -28,7 +28,7 @@ class PluginClientEntryHookABC(PluginCommonEntryHookABC):
         return self._angularMainModule
 
     @property
-    def angularFrontendDir(self) -> str:
+    def angularFrontendAppDir(self) -> str:
         """ Angular Frontend Dir
 
         This directory will be linked into the angular app when it is compiled.
