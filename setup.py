@@ -31,7 +31,7 @@ requirements = [
     "txcelery-py3 >= 1.1.3",
 
     # The package for RW support
-    "json-cfg-rw"
+    "json-cfg-rw",
     
     # Protocol and data packages
     "pytmpdir >= 0.2.3",  # A temporary directory, useful for extracting archives to
