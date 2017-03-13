@@ -38,6 +38,11 @@ requirements = [
     "txhttputil >= 0.1.8",  # Utility class for http requests
     "vortexpy >= 0.6.4",  # Data serialisation and transport layer, observable based
 
+    # SOAP interface packages
+    "SOAPpy-py3 >= 0.52.24",  # See http://soappy.ooz.ie for tutorials
+    "wstools-py3 >= 0.54.2",
+    "txsuds-py3 >= 0.5.9",
+
     # RxPY by Microsoft. Potentially used in plugins to create Observables.
     "rx >= 1.5.7",
 
