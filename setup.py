@@ -24,7 +24,7 @@ requirements = [
 
 
     # networking and async framework. Peek is based on Twisted.
-    "Twisted"
+    "Twisted[tls,conch] >= 16.0.0",
     
     # Celery packages
     "celery",
