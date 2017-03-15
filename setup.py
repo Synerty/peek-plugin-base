@@ -61,7 +61,7 @@ setup(
     description='Peek Plugin Base',
     author='Synerty',
     author_email='contact@synerty.com',
-    url='https://github.com/Synerty/%s' % py_package_name,
+    url='https://github.com/Synerty/%s' % pip_package_name,
     download_url='https://github.com/Synerty/%s/tarball/%s' % (
         pip_package_name, package_version),
     keywords=['Peek', 'Python', 'Platform', 'synerty'],
