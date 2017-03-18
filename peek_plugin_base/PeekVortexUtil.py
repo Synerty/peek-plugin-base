@@ -12,5 +12,8 @@ peekAgentName = "peek-agent"
 #: The vortex name for the Worker service
 peekWorkerName = "peek-worker"
 
-#: This is a cool test
-aNarlyVar = "AWESOME"
+# #: The vortex name for the Mobile service
+# peekWorkerName = "peek-mobile"
+#
+# #: The vortex name for the Admin service
+# peekWorkerName = "peek-admin"
