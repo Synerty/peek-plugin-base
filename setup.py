@@ -57,7 +57,7 @@ setup(
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     install_requires=requirements,
     dependency_links=dependency_links,
-    version=package_version,
+    zip_safe=False,version=package_version,
     description='Peek Plugin Base',
     author='Synerty',
     author_email='contact@synerty.com',
