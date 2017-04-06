@@ -15,5 +15,5 @@ class PluginAgentEntryHookABC(PluginCommonEntryHookABC):
         return self._platform
 
     @property
-    def publishedAgentApi(self, requestingPluginName:str) -> Optional[object]:
+    def publishedAgentApi(self) -> Optional[object]:
         return None
