@@ -81,14 +81,3 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
 
         """
         pass
-
-    @property
-    def publishedStorageApi(self, requestingPluginName: str) -> Optional[object]:
-        """ Published Storage API
-
-        :param requestingPluginName: The name of the peek app requesting the API
-
-        :return An object implementing an API that may be used by other apps in
-        the platform.
-        """
-        return None
