@@ -1,10 +1,13 @@
 from sqlalchemy import TypeDecorator
-from sqlalchemy import VARBINARY
 from sqlalchemy import cast
+from sqlalchemy.sql.sqltypes import LargeBinary
 
 
-class PeekVarBinary(TypeDecorator):
-    impl = VARBINARY
+class PeekLargeBinary(TypeDecorator):
+    """
+    
+    """
+    impl = LargeBinary
 
     def bind_expression(self, bindvalue):
-        return cast(bindvalue, VARBINARY)
+        return cast(bindvalue, LargeBinary)
