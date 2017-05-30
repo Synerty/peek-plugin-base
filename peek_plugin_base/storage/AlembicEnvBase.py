@@ -5,6 +5,20 @@ from sqlalchemy.dialects.postgresql.base import PGDialect
 from txhttputil.util.LoggingUtil import setupLogging
 
 
+def ensureSchemaExists(engine, schemaName):
+    # Ensure the schema exists
+
+    if isinstance(engine.dialect, MSDialect):
+        if list(engine.execute("SELECT SCHEMA_ID('%s')" % schemaName))[0][0] is None:
+            engine.execute("CREATE SCHEMA [%s]" % schemaName)
+
+    elif isinstance(engine.dialect, PGDialect):
+        engine.execute(
+            'CREATE SCHEMA IF NOT EXISTS "%s" ' % schemaName)
+
+    else:
+        raise Exception('unknown dialect %s' % engine.dialect)
+
 class AlembicEnvBase:
     def __init__(self, targetMetadata):
         setupLogging()
@@ -33,18 +47,6 @@ class AlembicEnvBase:
             poolclass=pool.NullPool)
 
         with connectable.connect() as connection:
-            # Ensure the schema exists
-            if isinstance(connection.dialect, MSDialect):
-                connection.execute(
-                    "IF(SCHEMA_ID('%s')IS NULL) BEGIN EXEC('CREATE SCHEMA [%s]')END" % (
-                        self._schemaName, self._schemaName))
-
-            elif isinstance(connection.dialect, PGDialect):
-                connection.execute(
-                    'CREATE SCHEMA IF NOT EXISTS "%s" ' % self._schemaName)
-
-            else:
-                raise Exception('unknown dialect %s' % connection.dialect)
 
             context.configure(
                 connection=connection,

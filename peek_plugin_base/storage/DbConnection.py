@@ -17,6 +17,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.schema import Sequence, MetaData
 
+from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists
+
 logger = logging.getLogger(__name__)
 
 
@@ -71,7 +73,7 @@ class DbConnection:
         Close all ORM sessions connected to this DB engine.
 
         """
-        self.dbSessionCreator()  # Ensure we have a session maker
+        self.ormSessionCreator()  # Ensure we have a session maker and session
         self._ScopedSession.close_all()
 
     @property
@@ -115,9 +117,11 @@ class DbConnection:
 
         assert self.ormSessionCreator, "ormSessionCreator is not defined"
 
+        connection= self._dbEngine.connect()
         isDbInitialised = self._dbEngine.dialect.has_table(
-            self._dbEngine.connect(), 'alembic_version',
+            connection, 'alembic_version',
             schema=self._metadata.schema)
+        connection.close()
 
         if isDbInitialised or not self._enableCreateAll:
             self._doMigration(self._dbEngine)
@@ -151,27 +155,28 @@ class DbConnection:
         if not count:
             return
 
-        session = self.ormSession
-        session.commit()
+        ormSession = self.ormSessionCreator()
+        try:
+            while not self._sequenceMutex.aquire():
+                sleep(0.001)
 
-        while not self._sequenceMutex.aquire():
-            sleep(0.001)
+            # Something about the backend not updating curval/nextval causes issues when
+            #
+            sequence = Sequence('%s_id_seq' % Declarative.__tablename__)
+            startId = ormSession.execute(sequence) + 1
+            endId = startId + count
 
-        # Something about the backend not updating curval/nextval causes issues when
-        #
-        sequence = Sequence('%s_id_seq' % Declarative.__tablename__)
-        startId = session.execute(sequence) + 1
-        endId = startId + count
+            ormSession.execute('alter sequence "%s" restart with %s'
+                            % (sequence.name, endId + 1))
+            ormSession.commit()
 
-        session.execute('alter sequence "%s" restart with %s'
-                        % (sequence.name, endId + 1))
-        session.commit()
+            self._sequenceMutex.release()
 
-        self._sequenceMutex.release()
-
-        while startId < endId:
-            yield startId
-            startId += 1
+            while startId < endId:
+                yield startId
+                startId += 1
+        finally:
+            ormSession.close()
 
     def _runAlembicCommand(self, command, *args):
         configFile = self._writeAlembicIni()
@@ -180,21 +185,10 @@ class DbConnection:
         alembic_cfg = Config(configFile.name)
         command(alembic_cfg, *args)
 
+
     def _doCreateAll(self, engine):
-        # Ensure the schema exists
-        if isinstance(self._dbEngine.dialect, MSDialect):
-            self._dbEngine.execute(
-                "IF(SCHEMA_ID('%s')IS NULL) BEGIN EXEC('CREATE SCHEMA [%s]')END" % (
-                self._metadata.schema, self._metadata.schema))
-
-        elif isinstance(self._dbEngine.dialect, PGDialect):
-            self._dbEngine.execute(
-                'CREATE SCHEMA IF NOT EXISTS "%s" ' % self._metadata.schema)
-
-        else:
-            raise Exception('unknown dialect %s' % self._dbEngine.dialect)
-
-        self._metadata.create_all(self._dbEngine)
+        ensureSchemaExists(engine, self._metadata.schema)
+        self._metadata.create_all(engine)
 
         from alembic import command
         self._runAlembicCommand(command.stamp, "head")
@@ -227,5 +221,7 @@ class DbConnection:
         return file.namedTempFileReader()
 
     def _doMigration(self, engine):
+        ensureSchemaExists(engine, self._metadata.schema)
+
         from alembic import command
         self._runAlembicCommand(command.upgrade, "head")
