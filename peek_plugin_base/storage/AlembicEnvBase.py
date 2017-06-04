@@ -47,6 +47,7 @@ class AlembicEnvBase:
             poolclass=pool.NullPool)
 
         with connectable.connect() as connection:
+            ensureSchemaExists(connectable, self._schemaName)
 
             context.configure(
                 connection=connection,
