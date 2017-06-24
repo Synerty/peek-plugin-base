@@ -1,11 +1,15 @@
 from peek_plugin_base.PeekPlatformCommonHookABC import PeekPlatformCommonHookABC
 from peek_plugin_base.PeekPlatformFileStorageHookABC import PeekPlatformFileStorageHookABC
 from peek_plugin_base.PeekPlatformServerInfoHookABC import PeekPlatformServerInfoHookABC
-from peek_plugin_base.PeekPlatformSiteHttpHookABC import PeekPlatformSiteHttpHookABC
+from peek_plugin_base.client.PeekPlatformDesktopHttpHookABC import \
+    PeekPlatformDesktopHttpHookABC
+from peek_plugin_base.client.PeekPlatformMobileHttpHookABC import \
+    PeekPlatformMobileHttpHookABC
 
 
 class PeekClientPlatformHookABC(PeekPlatformCommonHookABC,
-                                PeekPlatformSiteHttpHookABC,
+                                PeekPlatformMobileHttpHookABC,
+                                PeekPlatformDesktopHttpHookABC,
                                 PeekPlatformServerInfoHookABC,
                                 PeekPlatformFileStorageHookABC, ):
     pass
