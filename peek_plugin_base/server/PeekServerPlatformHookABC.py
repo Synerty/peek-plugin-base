@@ -1,12 +1,20 @@
 from pathlib import Path
 
 from abc import abstractmethod
+from txhttputil.site.BasicResource import BasicResource
+from txhttputil.site.FileUnderlayResource import FileUnderlayResource
 
 from peek_plugin_base.PeekPlatformCommonHookABC import PeekPlatformCommonHookABC
-from peek_plugin_base.PeekPlatformFrontendHookABC import PeekPlatformFrontendHookABC
+from peek_plugin_base.PeekPlatformFileStorageHookABC import PeekPlatformFileStorageHookABC
+from peek_plugin_base.PeekPlatformServerHttpHookABC import PeekPlatformServerHttpHookABC
+from peek_plugin_base.PeekPlatformSiteHttpHookABC import PeekPlatformSiteHttpHookABC
 
 
-class PeekServerPlatformHookABC(PeekPlatformCommonHookABC, PeekPlatformFrontendHookABC):
+class PeekServerPlatformHookABC(PeekPlatformCommonHookABC,
+                                PeekPlatformSiteHttpHookABC,
+                                PeekPlatformServerHttpHookABC,
+                                PeekPlatformFileStorageHookABC):
+
     @property
     @abstractmethod
     def dbConnectString(self) -> str:
@@ -14,18 +22,4 @@ class PeekServerPlatformHookABC(PeekPlatformCommonHookABC, PeekPlatformFrontendH
 
         :return: The SQLAlchemy database engine connection string/url.
 
-        """
-
-    @property
-    @abstractmethod
-    def fileStorageDirectory(self) -> Path:
-        """ File Storage Directory
-
-        This method returns a Path object providing access to the managed
-        file storage location where the plugin can persistently store any files it
-        wants to.
-
-        See https://docs.python.org/3/library/pathlib.html#basic-use
-
-        :returns: The plugins managed storage Path object.
         """
