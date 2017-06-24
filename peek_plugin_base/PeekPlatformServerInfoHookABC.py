@@ -19,7 +19,7 @@ class PeekPlatformServerInfoHookABC(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def PeekServerHost(self) -> str:
+    def peekServerHost(self) -> str:
         """ Peek Server Host
 
         :return: The IP address of the server where the peek server service is running.
