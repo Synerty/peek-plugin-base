@@ -4,6 +4,11 @@ from sqlalchemy.dialects.mssql.base import MSDialect
 from sqlalchemy.dialects.postgresql.base import PGDialect
 from txhttputil.util.LoggingUtil import setupLogging
 
+def isMssqlDialect(engine):
+    return isinstance(engine.dialect, MSDialect)
+
+def isPostGreSQLDialect(engine):
+    return isinstance(engine.dialect, PGDialect)
 
 def ensureSchemaExists(engine, schemaName):
     # Ensure the schema exists

@@ -17,7 +17,10 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.schema import Sequence, MetaData
 
-from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists
+from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists, \
+    isPostGreSQLDialect
+
+from vortex.DeferUtil import deferToThreadWrapWithLogger
 
 logger = logging.getLogger(__name__)
 
@@ -146,35 +149,40 @@ class DbConnection:
             for key in keys:
                 logger.warning("Missing index on ForeignKey %s" % key.columns)
 
+    @deferToThreadWrapWithLogger(logger)
     def getPgSequenceGenerator(self, Declarative, count):
         """ Get Postgresql Sequence Generator
 
         :return: A generator that yields each ID up to (count) more than the current
                     latest DB id.
         """
+
+        # if isPostGreSQLDialect(self.dbEngine):
+        #     return None
+
         if not count:
+            logger.debug("Count was zero, no range returned")
             return
 
         ormSession = self.ormSessionCreator()
         try:
-            while not self._sequenceMutex.aquire():
-                sleep(0.001)
+            self._sequenceMutex.acquire()
 
             # Something about the backend not updating curval/nextval causes issues when
             #
-            sequence = Sequence('%s_id_seq' % Declarative.__tablename__)
+            sequence = Sequence('%s_id_seq' % Declarative.__tablename__,
+                                schema=Declarative.metadata.schema)
             startId = ormSession.execute(sequence) + 1
-            endId = startId + count
+            nextStartId = startId + count
 
-            ormSession.execute('alter sequence "%s" restart with %s'
-                            % (sequence.name, endId + 1))
+            ormSession.execute('alter sequence "%s"."%s" restart with %s'
+                            % (sequence.schema, sequence.name, nextStartId))
             ormSession.commit()
 
             self._sequenceMutex.release()
 
-            while startId < endId:
-                yield startId
-                startId += 1
+            return iter(range(startId, nextStartId))
+
         finally:
             ormSession.close()
 

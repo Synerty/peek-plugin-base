@@ -6,6 +6,7 @@ from jsoncfg.value_mappers import require_string
 from sqlalchemy import MetaData
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm.session import Session
+from twisted.internet.defer import Deferred
 
 from peek_plugin_base.storage.DbConnection import DbConnection
 
@@ -57,6 +58,18 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
 
         """
         return self._dbConn._dbEngine
+
+    def getPgSequenceGenerator(self, Declarative, count) -> Deferred:
+        """ Get PG Sequence Generator
+
+        A PostGreSQL sequence generator returns a chunk of IDs for the given
+        declarative.
+
+        :return: A generator that will provide the IDs
+        :rtype: an iterator, yielding the numbers to assign
+
+        """
+        return self._dbConn.getPgSequenceGenerator(Declarative=Declarative, count=count)
 
     @abstractproperty
     def dbMetadata(self) -> MetaData:
