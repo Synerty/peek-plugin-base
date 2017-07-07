@@ -11,5 +11,5 @@ class PeekClientPlatformHookABC(PeekPlatformCommonHookABC,
                                 PeekPlatformMobileHttpHookABC,
                                 PeekPlatformDesktopHttpHookABC,
                                 PeekPlatformServerInfoHookABC,
-                                PeekPlatformFileStorageHookABC, ):
+                                PeekPlatformFileStorageHookABC):
     pass

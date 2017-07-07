@@ -15,3 +15,11 @@ class PeekPlatformCommonHookABC(metaclass=ABCMeta):
         :return: An instance of the other plugins API for this Peek Platform Service.
 
         """
+
+    @property
+    @abstractmethod
+    def serviceId(self) -> str:
+        """ Service ID
+
+        Return a unique identifier for this service.
+        """

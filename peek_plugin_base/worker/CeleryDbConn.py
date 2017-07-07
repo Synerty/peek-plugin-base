@@ -16,7 +16,7 @@ def getDbEngine():
     global __dbEngine
 
     if _dbConnectString is None:
-        msg = "CeleryDbConn initiailsation error"
+        msg = "CeleryDbConn initialisation error"
         logger.error(msg)
         raise Exception(msg)
 
@@ -24,10 +24,10 @@ def getDbEngine():
         __dbEngine = create_engine(
             _dbConnectString,
             echo=False,
-            pool_size=1,  # This is per
-            max_overflow=2,  # Number that the pool size can exceed when required
-            pool_timeout=5,  # Timeout for getting conn from pool
-            pool_recycle=600  # Reconnect?? after 10 minutes
+            pool_size=4,  # This is per fork
+            max_overflow=10,  # Number that the pool size can exceed when required
+            pool_timeout=20,  # Timeout for getting conn from pool
+            pool_recycle=1200  # Reconnect?? after 10 minutes
         )
 
     return __dbEngine
