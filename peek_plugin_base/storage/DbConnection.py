@@ -1,26 +1,19 @@
-
 import logging
-from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from threading import Lock
-from time import sleep
 from typing import Optional, Dict, Union, Callable
 
 import sqlalchemy_utils
 from pytmpdir.Directory import Directory
 from sqlalchemy import create_engine
-from sqlalchemy.dialects.mssql.base import MSDialect
-from sqlalchemy.dialects.postgresql.base import PGDialect
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.schema import Sequence, MetaData
-
-from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists, \
-    isPostGreSQLDialect
-
 from vortex.DeferUtil import deferToThreadWrapWithLogger
+
+from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +113,7 @@ class DbConnection:
 
         assert self.ormSessionCreator, "ormSessionCreator is not defined"
 
-        connection= self._dbEngine.connect()
+        connection = self._dbEngine.connect()
         isDbInitialised = self._dbEngine.dialect.has_table(
             connection, 'alembic_version',
             schema=self._metadata.schema)
@@ -176,7 +169,7 @@ class DbConnection:
             nextStartId = startId + count
 
             ormSession.execute('alter sequence "%s"."%s" restart with %s'
-                            % (sequence.schema, sequence.name, nextStartId))
+                               % (sequence.schema, sequence.name, nextStartId))
             ormSession.commit()
 
             self._sequenceMutex.release()
@@ -192,7 +185,6 @@ class DbConnection:
         from alembic.config import Config
         alembic_cfg = Config(configFile.name)
         command(alembic_cfg, *args)
-
 
     def _doCreateAll(self, engine):
         ensureSchemaExists(engine, self._metadata.schema)
