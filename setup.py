@@ -28,7 +28,7 @@ requirements = [
     
     # Celery packages
     "celery",
-    "txcelery-py3 >= 1.1.3",
+    "txcelery-py3 >= 1.2.0",
 
     # The package for RW support
     "json-cfg-rw",
@@ -36,7 +36,7 @@ requirements = [
     # Protocol and data packages
     "pytmpdir >= 0.2.3",  # A temporary directory, useful for extracting archives to
     "txhttputil >= 0.2.1",  # Utility class for http requests
-    "vortexpy >= 0.7.8",  # Data serialisation and transport layer, observable based
+    "vortexpy >= 0.8.0",  # Data serialisation and transport layer, observable based
 
     # SOAP interface packages
     "SOAPpy-py3 >= 0.52.24",  # See http://soappy.ooz.ie for tutorials
