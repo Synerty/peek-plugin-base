@@ -65,7 +65,8 @@ def prefetchDeclarativeIds(Declarative, count) -> Optional[Iterable[int]]:
 
         sequence = Sequence('%s_id_seq' % Declarative.__tablename__,
                             schema=Declarative.metadata.schema)
-        startId = conn.execute(sequence) + 1
+        sql ='SELECT NEXT VALUE FOR "%s"."%s"' % (sequence.schema, sequence.name)
+        startId = conn.execute(sql).fetchone()[0] + 1
         nextStartId = startId + count
 
         conn.execute('alter sequence "%s"."%s" restart with %s'
