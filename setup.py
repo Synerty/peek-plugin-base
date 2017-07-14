@@ -27,7 +27,6 @@ requirements = [
     "Twisted[tls,conch] >= 16.0.0",
     
     # Celery packages
-    "celery",
     "txcelery-py3 >= 1.2.0",
 
     # The package for RW support
