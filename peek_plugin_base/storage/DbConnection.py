@@ -1,19 +1,19 @@
 import logging
 from textwrap import dedent
 from threading import Lock
-from typing import Optional, Dict, Union, Callable
+from typing import Optional, Dict, Union, Callable, Iterable
 
 import sqlalchemy_utils
+from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists, isMssqlDialect, \
+    isPostGreSQLDialect
 from pytmpdir.Directory import Directory
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.sql.schema import Sequence, MetaData
+from sqlalchemy.sql.schema import MetaData, Sequence
 from vortex.DeferUtil import deferToThreadWrapWithLogger
-
-from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists
 
 logger = logging.getLogger(__name__)
 
@@ -143,41 +143,26 @@ class DbConnection:
                 logger.warning("Missing index on ForeignKey %s" % key.columns)
 
     @deferToThreadWrapWithLogger(logger)
-    def getPgSequenceGenerator(self, Declarative, count):
-        """ Get Postgresql Sequence Generator
+    def prefetchDeclarativeIds(self, Declarative, count) -> Optional[Iterable[int]]:
+        """ Prefetch Declarative IDs
 
-        :return: A generator that yields each ID up to (count) more than the current
-                    latest DB id.
+        This function prefetches a chunk of IDs from a database sequence.
+        Doing this allows us to preallocate the IDs before an insert, which significantly
+        speeds up :
+
+        * Orm inserts, especially those using inheritance
+        * When we need the ID to assign it to a related object that we're also inserting.
+
+        :param Declarative: The SQLAlchemy declarative class.
+            (The class that inherits from DeclarativeBase)
+
+        :param count: The number of IDs to prefetch
+
+        :return: An iterable that dispenses the new IDs
         """
-
-        # if isPostGreSQLDialect(self.dbEngine):
-        #     return None
-
-        if not count:
-            logger.debug("Count was zero, no range returned")
-            return
-
-        ormSession = self.ormSessionCreator()
-        try:
-            self._sequenceMutex.acquire()
-
-            # Something about the backend not updating curval/nextval causes issues when
-            #
-            sequence = Sequence('%s_id_seq' % Declarative.__tablename__,
-                                schema=Declarative.metadata.schema)
-            startId = ormSession.execute(sequence) + 1
-            nextStartId = startId + count
-
-            ormSession.execute('alter sequence "%s"."%s" restart with %s'
-                               % (sequence.schema, sequence.name, nextStartId))
-            ormSession.commit()
-
-            self._sequenceMutex.release()
-
-            return iter(range(startId, nextStartId))
-
-        finally:
-            ormSession.close()
+        return _commonPrefetchDeclarativeIds(
+            self.dbEngine, self._sequenceMutex, Declarative, count
+        )
 
     def _runAlembicCommand(self, command, *args):
         configFile = self._writeAlembicIni()
@@ -225,3 +210,47 @@ class DbConnection:
 
         from alembic import command
         self._runAlembicCommand(command.upgrade, "head")
+
+
+def _commonPrefetchDeclarativeIds(engine, mutex,
+                                  Declarative, count) -> Optional[Iterable[int]]:
+    """ Common Prefetch Declarative IDs
+
+    This function is used by the worker and server
+    """
+    if not count:
+        logger.debug("Count was zero, no range returned")
+        return
+
+    conn = engine.connect()
+    transaction = conn.begin()
+    mutex.acquire()
+    try:
+
+        sequence = Sequence('%s_id_seq' % Declarative.__tablename__,
+                            schema=Declarative.metadata.schema)
+
+        if isPostGreSQLDialect(engine):
+            startId = conn.execute(sequence) + 1
+
+        elif isMssqlDialect(engine):
+            startId = conn.execute(
+                'SELECT NEXT VALUE FOR "%s"."%s"'
+                % (sequence.schema, sequence.name)
+            ).fetchone()[0] + 1
+
+        else:
+            raise NotImplementedError()
+
+        nextStartId = startId + count
+
+        conn.execute('alter sequence "%s"."%s" restart with %s'
+                     % (sequence.schema, sequence.name, nextStartId))
+
+        transaction.commit()
+
+        return iter(range(startId, nextStartId))
+
+    finally:
+        mutex.release()
+        conn.close()

@@ -2,6 +2,8 @@ import logging
 from threading import Lock
 from typing import Iterable, Optional
 
+from peek_plugin_base.storage.AlembicEnvBase import isPostGreSQLDialect, isMssqlDialect
+from peek_plugin_base.storage.DbConnection import _commonPrefetchDeclarativeIds
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.orm.session import sessionmaker
@@ -51,32 +53,20 @@ _sequenceMutex = Lock()
 def prefetchDeclarativeIds(Declarative, count) -> Optional[Iterable[int]]:
     """ Prefetch Declarative IDs
 
-    :return: An iterable iterating over the new IDs to use
+    This function prefetches a chunk of IDs from a database sequence.
+    Doing this allows us to preallocate the IDs before an insert, which significantly
+    speeds up :
+
+    * Orm inserts, especially those using inheritance
+    * When we need the ID to assign it to a related object that we're also inserting.
+
+    :param Declarative: The SQLAlchemy declarative class.
+        (The class that inherits from DeclarativeBase)
+
+    :param count: The number of IDs to prefetch
+
+    :return: An iterable that dispenses the new IDs
     """
-
-    if not count:
-        logger.debug("Count was zero, no range returned")
-        return
-
-    conn = getDbEngine().connect()
-    transaction = conn.begin()
-    try:
-        _sequenceMutex.acquire()
-
-        sequence = Sequence('%s_id_seq' % Declarative.__tablename__,
-                            schema=Declarative.metadata.schema)
-        sql ='SELECT NEXT VALUE FOR "%s"."%s"' % (sequence.schema, sequence.name)
-        startId = conn.execute(sql).fetchone()[0] + 1
-        nextStartId = startId + count
-
-        conn.execute('alter sequence "%s"."%s" restart with %s'
-                     % (sequence.schema, sequence.name, nextStartId))
-
-        transaction.commit()
-
-        _sequenceMutex.release()
-
-        return iter(range(startId, nextStartId))
-
-    finally:
-        conn.close()
+    return _commonPrefetchDeclarativeIds(
+        getDbEngine(), _sequenceMutex, Declarative, count
+    )

@@ -59,7 +59,7 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
         """
         return self._dbConn._dbEngine
 
-    def getPgSequenceGenerator(self, Declarative, count) -> Deferred:
+    def prefetchDeclarativeIds(self, Declarative, count) -> Deferred:
         """ Get PG Sequence Generator
 
         A PostGreSQL sequence generator returns a chunk of IDs for the given
@@ -69,7 +69,7 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
         :rtype: an iterator, yielding the numbers to assign
 
         """
-        return self._dbConn.getPgSequenceGenerator(Declarative=Declarative, count=count)
+        return self._dbConn.prefetchDeclarativeIds(Declarative=Declarative, count=count)
 
     @abstractproperty
     def dbMetadata(self) -> MetaData:
