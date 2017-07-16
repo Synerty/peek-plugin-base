@@ -1,19 +1,43 @@
 import logging
+import platform
 from threading import Lock
 from typing import Iterable, Optional
 
-from peek_plugin_base.storage.AlembicEnvBase import isPostGreSQLDialect, isMssqlDialect
-from peek_plugin_base.storage.DbConnection import _commonPrefetchDeclarativeIds
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.orm.session import sessionmaker
-from sqlalchemy.sql.schema import Sequence
+
+from peek_plugin_base.PeekVortexUtil import peekWorkerName
+from peek_plugin_base.storage.DbConnection import _commonPrefetchDeclarativeIds
 
 logger = logging.getLogger(__name__)
 
 _dbConnectString = None
 __dbEngine = None
 __ScopedSession = None
+_isWindows = platform.system() is "Windows"
+
+def setConnStringForWindows():
+    """ Set Conn String for Windiws
+
+    Windows has a different way of forking processes, which causes the
+    @worker_process_init.connect signal not to work in "CeleryDbConnInit"
+
+
+    """
+    global _dbConnectString
+    from peek_platform.file_config.PeekFileConfigABC import PeekFileConfigABC
+    from peek_platform.file_config.PeekFileConfigSqlAlchemyMixin import \
+        PeekFileConfigSqlAlchemyMixin
+    from peek_platform import PeekPlatformConfig
+
+    class _WorkerTaskConfigMixin(PeekFileConfigABC,
+                           PeekFileConfigSqlAlchemyMixin):
+        pass
+
+    PeekPlatformConfig.componentName = peekWorkerName
+
+    _dbConnectString = _WorkerTaskConfigMixin().dbConnectString
 
 
 # For celery, an engine is created per worker
@@ -21,9 +45,13 @@ def getDbEngine():
     global __dbEngine
 
     if _dbConnectString is None:
-        msg = "CeleryDbConn initialisation error"
-        logger.error(msg)
-        raise Exception(msg)
+        if _isWindows:
+            setConnStringForWindows()
+
+        else:
+            msg = "CeleryDbConn initialisation error"
+            logger.error(msg)
+            raise Exception(msg)
 
     if not __dbEngine:
         __dbEngine = create_engine(
