@@ -14,6 +14,7 @@ def _createMssqlSqlText(values: List[Union[int, str]]) -> str:
 
     elif isinstance(values[0], int):
         name = "peekCsvIntToTable"
+        values = [str(v) for v in values]
 
     else:
         raise NotImplementedError("The value supplies isn't a str or int, %s", values[0])
