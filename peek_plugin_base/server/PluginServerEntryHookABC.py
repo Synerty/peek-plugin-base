@@ -34,8 +34,7 @@ class PluginServerEntryHookABC(PluginCommonEntryHookABC):
             # Ingore this typing error, it's a bug in pycharm
             dbConnectString=str(self.platform.dbConnectString),
             metadata=metadata,
-            alembicDir=alembicDir,
-            enableCreateAll=False
+            alembicDir=alembicDir
         )
 
         self._dbConn.migrate()
