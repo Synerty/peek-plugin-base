@@ -27,7 +27,7 @@ requirements = [
     "Twisted[tls,conch] >= 16.0.0",
     
     # Celery packages
-    "txcelery-py3 >= 1.2.2",
+    "txcelery-py3 >= 1.3.0",
 
     # The package for RW support
     "json-cfg-rw",
