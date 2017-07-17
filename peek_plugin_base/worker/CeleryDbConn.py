@@ -46,6 +46,8 @@ def getDbEngine():
 
     if _dbConnectString is None:
         if _isWindows:
+            from peek_platform.ConfigCeleryApp import configureCeleryLogging
+            configureCeleryLogging()
             setConnStringForWindows()
 
         else:
