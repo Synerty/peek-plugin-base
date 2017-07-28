@@ -43,7 +43,11 @@ requirements = [
     "txsuds-py3 >= 0.5.9",
 
     # RxPY by Microsoft. Potentially used in plugins to create Observables.
-    "rx >= 1.5.7"
+    "rx >= 1.5.7",
+
+    # Improve datetime support
+    "pytz",
+    "tzlocal"
 
 ]
 
