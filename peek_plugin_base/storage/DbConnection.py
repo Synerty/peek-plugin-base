@@ -4,18 +4,25 @@ from threading import Lock
 from typing import Optional, Dict, Union, Callable, Iterable
 
 import sqlalchemy_utils
-from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists, isMssqlDialect, \
-    isPostGreSQLDialect
 from pytmpdir.Directory import Directory
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
+from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.schema import MetaData, Sequence
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 
+from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists, isMssqlDialect, \
+    isPostGreSQLDialect
+
 logger = logging.getLogger(__name__)
+
+DbSessionCreator = Callable[[], Session]
+
+DelcarativeIdGen = Optional[Iterable[int]]
+DeclarativeIdCreator = Callable[[object, int], DelcarativeIdGen]
 
 
 class DbConnection:
@@ -143,7 +150,7 @@ class DbConnection:
                 logger.warning("Missing index on ForeignKey %s" % key.columns)
 
     @deferToThreadWrapWithLogger(logger)
-    def prefetchDeclarativeIds(self, Declarative, count) -> Optional[Iterable[int]]:
+    def prefetchDeclarativeIds(self, Declarative, count) -> DelcarativeIdGen:
         """ Prefetch Declarative IDs
 
         This function prefetches a chunk of IDs from a database sequence.
