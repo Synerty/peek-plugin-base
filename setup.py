@@ -34,7 +34,7 @@ requirements = [
     
     # Protocol and data packages
     "pytmpdir >= 0.2.3",  # A temporary directory, useful for extracting archives to
-    "txhttputil >= 0.2.4",  # Utility class for http requests
+    "txhttputil >= 0.2.7",  # Utility class for http requests
     "vortexpy >= 0.10.0",  # Data serialisation and transport layer, observable based
 
     # SOAP interface packages
