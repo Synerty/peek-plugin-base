@@ -23,7 +23,7 @@ def initWorkerConnString(sender, **kwargs):
 
 @worker_process_init.connect
 def initWorkerProcessDbConn(**kwargs):
-    logger.info('Creating unique database connection for worker process')
+    logger.debug('Creating unique database connection for worker process')
 
     # The next call to CeleryDbConn.dbEngine property will create a new engine
     # with this connection string
@@ -31,11 +31,12 @@ def initWorkerProcessDbConn(**kwargs):
     CeleryDbConn = importlib.reload(CeleryDbConn)
 
     CeleryDbConn._dbConnectString = __WorkerInit.dbConnectString
+    logger.info('Created unique database connection for worker process')
 
 
 @worker_process_shutdown.connect
 def shutdownWorkerProcessDbConn(**kwargs):
-    logger.info('Closing database connectionn for worker.')
+    logger.debug('Closing database connectionn for worker.')
 
     if CeleryDbConn.__ScopedSession:
         getDbSession()  # Ensure we have a session maker
@@ -43,6 +44,8 @@ def shutdownWorkerProcessDbConn(**kwargs):
 
     if CeleryDbConn.__dbEngine:
         CeleryDbConn.__dbEngine.dispose()
+
+    logger.info('Closed database connectionn for worker.')
 
 
 @task_postrun.connect
