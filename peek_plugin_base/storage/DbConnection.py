@@ -80,7 +80,7 @@ class DbConnection:
         self._ScopedSession.close_all()
 
     @property
-    def ormSessionCreator(self) -> Callable[[], Session]:
+    def ormSessionCreator(self) -> DbSessionCreator:
         """ Get Orm Session
 
         :return: A SQLAlchemy session scoped for the callers thread..

@@ -8,7 +8,7 @@ from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm.session import Session
 from twisted.internet.defer import Deferred
 
-from peek_plugin_base.storage.DbConnection import DbConnection
+from peek_plugin_base.storage.DbConnection import DbConnection, DbSessionCreator
 
 
 class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
@@ -36,7 +36,7 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
         self._dbConn.migrate()
 
     @property
-    def dbSessionCreator(self) -> Callable[[], Session]:
+    def dbSessionCreator(self) -> DbSessionCreator:
         """ Database Session
 
         This is a helper property that can be used by the papp to get easy access to
