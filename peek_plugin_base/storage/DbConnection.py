@@ -7,15 +7,14 @@ import sqlalchemy_utils
 from pytmpdir.Directory import Directory
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
-from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.schema import MetaData, Sequence
-from vortex.DeferUtil import deferToThreadWrapWithLogger
 
 from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists, isMssqlDialect, \
     isPostGreSQLDialect
+from vortex.DeferUtil import deferToThreadWrapWithLogger
 
 logger = logging.getLogger(__name__)
 
@@ -233,12 +232,17 @@ def _commonPrefetchDeclarativeIds(engine, mutex,
     transaction = conn.begin()
     mutex.acquire()
     try:
-
         sequence = Sequence('%s_id_seq' % Declarative.__tablename__,
                             schema=Declarative.metadata.schema)
 
         if isPostGreSQLDialect(engine):
-            startId = conn.execute(sequence) + 1
+            sql = "SELECT setval('%(seq)s', (select nextval('%(seq)s') + %(add)s), true)"
+            sql %= {
+                'seq': '"%s"."%s"' % (sequence.schema, sequence.name),
+                'add': count
+            }
+            nextStartId = conn.execute(sql).fetchone()[0]
+            startId = nextStartId - count
 
         elif isMssqlDialect(engine):
             startId = conn.execute(
@@ -246,13 +250,13 @@ def _commonPrefetchDeclarativeIds(engine, mutex,
                 % (sequence.schema, sequence.name)
             ).fetchone()[0] + 1
 
+            nextStartId = startId + count
+
+            conn.execute('alter sequence "%s"."%s" restart with %s'
+                         % (sequence.schema, sequence.name, nextStartId))
+
         else:
             raise NotImplementedError()
-
-        nextStartId = startId + count
-
-        conn.execute('alter sequence "%s"."%s" restart with %s'
-                     % (sequence.schema, sequence.name, nextStartId))
 
         transaction.commit()
 
