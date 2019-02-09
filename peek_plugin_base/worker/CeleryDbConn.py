@@ -13,6 +13,7 @@ from peek_plugin_base.storage.DbConnection import _commonPrefetchDeclarativeIds
 logger = logging.getLogger(__name__)
 
 _dbConnectString = None
+_dbEngineArgs = {}
 __dbEngine = None
 __ScopedSession = None
 _isWindows = platform.system() is "Windows"
@@ -26,6 +27,7 @@ def setConnStringForWindows():
 
     """
     global _dbConnectString
+    global _dbEngineArgs
     from peek_platform.file_config.PeekFileConfigABC import PeekFileConfigABC
     from peek_platform.file_config.PeekFileConfigSqlAlchemyMixin import \
         PeekFileConfigSqlAlchemyMixin
@@ -38,6 +40,7 @@ def setConnStringForWindows():
     PeekPlatformConfig.componentName = peekWorkerName
 
     _dbConnectString = _WorkerTaskConfigMixin().dbConnectString
+    _dbEngineArgs = _WorkerTaskConfigMixin().dbEngineArgs
 
 
 # For celery, an engine is created per worker
@@ -58,11 +61,7 @@ def getDbEngine():
     if not __dbEngine:
         __dbEngine = create_engine(
             _dbConnectString,
-            echo=False,
-            pool_size=4,  # This is per fork
-            max_overflow=10,  # Number that the pool size can exceed when required
-            pool_timeout=20,  # Timeout for getting conn from pool
-            pool_recycle=1200  # Reconnect?? after 10 minutes
+            **_dbEngineArgs
         )
 
     return __dbEngine

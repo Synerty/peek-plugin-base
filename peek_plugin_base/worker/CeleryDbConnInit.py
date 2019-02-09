@@ -13,12 +13,14 @@ logger = logging.getLogger(__name__)
 class __WorkerInit:
     # Store the data for the worker processes to initialise with
     dbConnectString = None
+    dbEngineArgs = None
 
 
 @worker_init.connect
 def initWorkerConnString(sender, **kwargs):
     logger.info("Setting worker process database connection string")
     __WorkerInit.dbConnectString = sender.app.peekDbConnectString
+    __WorkerInit.dbEngineArgs = sender.app.peekDbEngineArgs
 
 
 @worker_process_init.connect
@@ -31,6 +33,7 @@ def initWorkerProcessDbConn(**kwargs):
     CeleryDbConn = importlib.reload(CeleryDbConn)
 
     CeleryDbConn._dbConnectString = __WorkerInit.dbConnectString
+    CeleryDbConn._dbEngineArgs = __WorkerInit.dbEngineArgs
     logger.info('Created unique database connection for worker process')
 
 
