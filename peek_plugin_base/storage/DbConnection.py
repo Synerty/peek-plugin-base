@@ -1,19 +1,20 @@
 import logging
+from io import StringIO
 from textwrap import dedent
 from threading import Lock
 from typing import Optional, Dict, Union, Callable, Iterable
 
 import sqlalchemy_utils
+from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists, isMssqlDialect, \
+    isPostGreSQLDialect
 from pytmpdir.Directory import Directory
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Integer
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.schema import MetaData, Sequence
-
-from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists, isMssqlDialect, \
-    isPostGreSQLDialect
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 
 logger = logging.getLogger(__name__)
@@ -216,6 +217,64 @@ class DbConnection:
 
         from alembic import command
         self._runAlembicCommand(command.upgrade, "head")
+
+
+def convertToCoreSqlaInsert(ormObj, Declarative):
+    insertDict = dict()
+
+    for fieldName in Declarative.tupleFieldNames():
+        value = getattr(ormObj, fieldName)
+
+        if value is None:
+            Col = getattr(Declarative, fieldName)
+            if isinstance(Col, InstrumentedAttribute):
+                value = Col.server_default.arg if Col.server_default else None
+                if value == 'false':
+                    value = False
+
+                elif value == 'true':
+                    value = True
+
+        insertDict[fieldName] = value
+
+    return insertDict
+
+
+def pgCopyInsert(engine, table, inserts):
+    colTypes = [c.type for c in table.c]
+
+    def convert(index, val):
+        if val is None:
+            return '\\N'
+
+        if isinstance(colTypes[index], Integer):
+            return str(val).split('.')[0]
+
+        return str(val).replace('\\', '\\\\') \
+            .replace('\t', '\\t') \
+            .replace('\n', '\\n') \
+            .replace('\r', '\\r')
+
+    columns = [str(c).split('.')[1] for c in table.c]
+    f = StringIO()
+    for insert in inserts:
+        line = ''
+        for i, c in enumerate(columns):
+            line += convert(i, insert[c])
+            line += '\n' if i == len(columns) - 1 else '\t'
+
+        f.write(line)
+
+    f.seek(0)
+
+    rawConn = engine.raw_connection()
+    cursor = rawConn.cursor()
+    cursor.copy_from(f, '"%s"."%s"' % (table.schema, table.name),
+                     sep='\t', null='\\N',
+                     columns=tuple(['"%s"' % c for c in columns]))
+    rawConn.commit()
+    f.close()
+    cursor.close()
 
 
 def _commonPrefetchDeclarativeIds(engine, mutex,
