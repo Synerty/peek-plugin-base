@@ -240,7 +240,7 @@ def convertToCoreSqlaInsert(ormObj, Declarative):
     return insertDict
 
 
-def pgCopyInsert(engine, table, inserts):
+def pgCopyInsert(rawConn, table, inserts):
     colTypes = [c.type for c in table.c]
 
     def convert(index, val):
@@ -267,12 +267,10 @@ def pgCopyInsert(engine, table, inserts):
 
     f.seek(0)
 
-    rawConn = engine.raw_connection()
     cursor = rawConn.cursor()
     cursor.copy_from(f, '"%s"."%s"' % (table.schema, table.name),
                      sep='\t', null='\\N',
                      columns=tuple(['"%s"' % c for c in columns]))
-    rawConn.commit()
     f.close()
     cursor.close()
 
