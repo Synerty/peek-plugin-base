@@ -42,8 +42,9 @@ requirements = [
     "wstools-py3 >= 0.54.2",
     "txsuds-py3 >= 0.5.9",
 
-    # RxPY by Microsoft. Potentially used in plugins to create Observables.
-    "rx >= 1.5.7",
+    # RxPY by Microsoft. Used everywhere
+    # TODO Upgrade to rx 3.x.x
+    "rx < 3.0.0",
 
     # Improve datetime support
     "pytz",
