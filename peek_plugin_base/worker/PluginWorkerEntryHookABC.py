@@ -26,16 +26,3 @@ class PluginWorkerEntryHookABC(PluginCommonEntryHookABC):
         :return: A list of package+module names that Celery should import.
 
         """
-
-    @abstractproperty
-    def celeryApp(self) -> Celery:
-        """ Celery App
-
-        Return the workers instance of the celery app.
-
-        This will be configured with the platforms celery setup.
-
-        """
-
-        # There are no APIs
-        # The worker threads can't access this.
