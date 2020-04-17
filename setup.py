@@ -22,9 +22,8 @@ requirements = [
     "alembic >= 0.8.7",  # Database migration utility
     "GeoAlchemy2",  # Geospatial addons to SQLAlchemy
 
-
     # networking and async framework. Peek is based on Twisted.
-    "Twisted[tls,conch] < 19.0.0",
+    "Twisted[tls,conch]",
     
     # Celery packages
     "txcelery-py3 >= 1.6.1",
@@ -34,7 +33,7 @@ requirements = [
     
     # Protocol and data packages
     "pytmpdir >= 0.2.3",  # A temporary directory, useful for extracting archives to
-    "txhttputil >= 0.3.0",  # Utility class for http requests
+    "txhttputil >= 0.3.1",  # Utility class for http requests
     "vortexpy >= 1.2.11",  # Data serialisation and transport layer, observable based
 
     # SOAP interface packages
