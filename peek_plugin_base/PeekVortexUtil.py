@@ -1,6 +1,9 @@
 #: The vortex name for the Server service
 peekServerName = "peek-server"
 
+#: The vortex name for the Storage service
+peekStorageName = "peek-storage"
+
 #: The vortex name for the Client service
 peekClientName = "peek-client"
 
