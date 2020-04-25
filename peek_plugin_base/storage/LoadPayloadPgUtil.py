@@ -1,8 +1,6 @@
-import sys
 from logging import Logger
 from typing import Callable, Dict, Optional
 
-import ujson
 from sqlalchemy.sql import Select
 from twisted.internet.defer import Deferred
 from vortex.DeferUtil import deferToThreadWrapWithLogger
@@ -20,9 +18,6 @@ def getTuplesPayload(logger: Logger,
     return deferToThreadWrapWithLogger(logger) \
         (getTuplesPayloadBlocking) \
         (dbSessionCreator, sql, sqlCoreLoadTupleClassmethod, payloadFilt, fetchSize)
-
-
-__sysPathsJson = ujson.dumps(sys.path)
 
 
 def getTuplesPayloadBlocking(dbSessionCreator: DbSessionCreator,
