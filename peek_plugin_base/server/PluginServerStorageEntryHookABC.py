@@ -85,7 +85,6 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
         :return: The instance of the metadata for this plugin.
 
         Example from peek_plugin_noop.storage.DeclarativeBase.py
-        --------------------------------------------------------
 
         ::
 

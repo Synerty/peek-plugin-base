@@ -18,8 +18,9 @@ class PluginPackageFileConfig(object):
         """
         Constructor
 
-        :param pluginRootDir: The root directory of this package, where plugin_package.json
-        lives.
+        :param pluginRootDir: The root directory of this package,
+            where plugin_package.json lives.
+
         """
         self._pluginRoot = pluginRootDir
         if not os.path.isdir(self._pluginRoot): raise NotADirectoryError(self._pluginRoot)
