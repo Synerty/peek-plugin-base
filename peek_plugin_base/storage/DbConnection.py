@@ -90,13 +90,8 @@ class DbConnection:
         if self._ScopedSession:
             return self._ScopedSession
 
-        self._dbEngine = create_engine(
-            self._dbConnectString,
-            **self._dbEngineArgs
-        )
-
         self._ScopedSession = scoped_session(
-            sessionmaker(bind=self._dbEngine))
+            sessionmaker(bind=self.dbEngine))
 
         return self._ScopedSession
 
@@ -110,6 +105,12 @@ class DbConnection:
         :return: the DB Engine used to connect to the database.
 
         """
+        if self._dbEngine is None:
+            self._dbEngine = create_engine(
+                self._dbConnectString,
+                **self._dbEngineArgs
+            )
+
         return self._dbEngine
 
     def migrate(self) -> None:
