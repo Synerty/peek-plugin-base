@@ -24,17 +24,17 @@ requirements = [
 
     # networking and async framework. Peek is based on Twisted.
     "Twisted[tls,conch]",
-    
+
     # Celery packages
     "txcelery-py3 >= 1.6.3",
 
     # The package for RW support
     "json-cfg-rw",
-    
+
     # Protocol and data packages
     "pytmpdir >= 0.2.3",  # A temporary directory, useful for extracting archives to
-    "txhttputil >= 0.3.5",  # Utility class for http requests
-    "vortexpy >= 1.2.19",  # Data serialisation and transport layer, observable based
+    "txhttputil >= 0.3.6",  # Utility class for http requests
+    "vortexpy >= 1.3.2",  # Data serialisation and transport layer, observable based
 
     # SOAP interface packages
     "SOAPpy-py3 >= 0.52.24",  # See http://soappy.ooz.ie for tutorials

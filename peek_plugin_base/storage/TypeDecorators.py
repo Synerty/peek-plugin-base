@@ -4,8 +4,8 @@ from sqlalchemy.sql.sqltypes import LargeBinary
 
 
 class PeekLargeBinary(TypeDecorator):
-    """
-    
+    """ Peek Large Binary
+
     """
     impl = LargeBinary
 
