@@ -5,7 +5,7 @@ from typing import Optional
 class PeekPlatformCommonHookABC(metaclass=ABCMeta):
 
     @abstractmethod
-    def getOtherPluginApi(self, pluginName:str) -> Optional[object]:
+    def getOtherPluginApi(self, pluginName: str) -> Optional[object]:
         """ Get Other Plugin Api
 
         Asks the plugin for it's api object and return it to this plugin.

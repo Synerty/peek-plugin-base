@@ -1,11 +1,12 @@
 from abc import ABCMeta, abstractmethod
 
 from jsoncfg.value_mappers import require_string
+
 from peek_plugin_base.PluginPackageFileConfig import PluginPackageFileConfig
 
 
 class PluginCommonEntryHookABC(metaclass=ABCMeta):
-    def __init__(self, pluginName:str, pluginRootDir:str):
+    def __init__(self, pluginName: str, pluginRootDir: str):
         self._pluginName = pluginName
         self._pluginRootDir = pluginRootDir
         self._packageCfg = PluginPackageFileConfig(pluginRootDir)
