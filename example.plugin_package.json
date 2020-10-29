@@ -21,7 +21,7 @@
     "client",
     "storage"
   ],
-  // Settings specific to the peek_client service
+  // Settings specific to the peek_office_service service
   "client": {
     // The directory where the angular2 route is for the client site
     // EG "frontend/client"
@@ -31,7 +31,7 @@
     // EG "plugin-noop.module"
     "angularMainModule": "plugin-noop.module"
   },
-  // Settings specific to the peek_server service
+  // Settings specific to the peek_logic_service service
   "server": {
     // The directory where the angular2 route is for server admin site
     // EG "frontend/client"
@@ -42,16 +42,16 @@
     "angularMainModule": "plugin-noop.module"
   },
   // Settings specific to the database service
-  // The database is migrated by the peek_server and used from both the server and worker
+  // The database is migrated by the peek_logic_service and used from both the server and worker
   // services
   "storage": {
     // The alembic directory where the database schema migration scripts are stored
     "alembicDir": "alembic"
   },
-  // Settings specific to the peek_worker service
+  // Settings specific to the peek_worker_service service
   "worker": {
   },
-  // Settings specific to the peek_agent service
+  // Settings specific to the peek_agent_service service
   "agent": {
   }
 }

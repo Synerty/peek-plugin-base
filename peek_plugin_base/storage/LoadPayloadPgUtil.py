@@ -6,7 +6,7 @@ from twisted.internet.defer import Deferred
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 
 from peek_plugin_base.storage.DbConnection import DbSessionCreator
-from peek_storage.plpython.LoadPayloadPgUtil import LoadPayloadTupleResult
+from peek_storage_service.plpython.LoadPayloadPgUtil import LoadPayloadTupleResult
 
 
 def getTuplesPayload(logger: Logger,
@@ -25,7 +25,7 @@ def getTuplesPayloadBlocking(dbSessionCreator: DbSessionCreator,
                              sqlCoreLoadTupleClassmethod: Callable,
                              payloadFilt: Optional[Dict] = None,
                              fetchSize=50) -> LoadPayloadTupleResult:
-    from peek_storage.plpython.LoadPayloadPgUtil import callPGLoadPayloadTuplesBlocking
+    from peek_storage_service.plpython.LoadPayloadPgUtil import callPGLoadPayloadTuplesBlocking
     return callPGLoadPayloadTuplesBlocking(dbSessionCreator,
                                            sql,
                                            sqlCoreLoadTupleClassmethod,

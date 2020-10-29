@@ -21,7 +21,7 @@ def runPyInPgBlocking(dbSessionCreator: DbSessionCreator,
                       classMethodToImportTuples: Optional[Callable],
                       *args,
                       **kwargs) -> Any:
-    from peek_storage.plpython.RunPyInPg import runPyInPgBlocking
+    from peek_storage_service.plpython.RunPyInPg import runPyInPgBlocking
     return runPyInPgBlocking(dbSessionCreator,
                              classMethodToRun,
                              classMethodToImportTuples,
