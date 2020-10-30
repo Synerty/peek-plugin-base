@@ -18,7 +18,8 @@
     "server",
     "worker",
     "agent",
-    "client",
+    "field",
+    "office",
     "storage"
   ],
   // Settings specific to the peek_office_service service
