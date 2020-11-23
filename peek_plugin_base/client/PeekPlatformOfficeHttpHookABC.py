@@ -4,7 +4,7 @@ from txhttputil.site.BasicResource import BasicResource
 from txhttputil.site.FileUnderlayResource import FileUnderlayResource
 
 
-class PeekPlatformDesktopHttpHookABC(metaclass=ABCMeta):
+class PeekPlatformOfficeHttpHookABC(metaclass=ABCMeta):
     """ Peek Platform Site HTTP Hook
 
     The methods provided by this class apply to the HTTP sites served by the
@@ -16,9 +16,9 @@ class PeekPlatformDesktopHttpHookABC(metaclass=ABCMeta):
 
     """
     def __init__(self):
-        self.__rootDesktopResource = FileUnderlayResource()
+        self.__rootOfficeResource = FileUnderlayResource()
 
-    def addDesktopStaticResourceDir(self, dir: str) -> None:
+    def addOfficeStaticResourceDir(self, dir: str) -> None:
         """ Add Site Static Resource Directory
 
         Calling this method sets up directory :code:`dir` to be served by the site.
@@ -26,9 +26,9 @@ class PeekPlatformDesktopHttpHookABC(metaclass=ABCMeta):
         :param dir: The file system directory to be served.
         :return: None
         """
-        self.__rootDesktopResource.addFileSystemRoot(dir)
+        self.__rootOfficeResource.addFileSystemRoot(dir)
 
-    def addDesktopResource(self, pluginSubPath: bytes, resource: BasicResource) -> None:
+    def addOfficeResource(self, pluginSubPath: bytes, resource: BasicResource) -> None:
         """ Add Site Resource
 
         Add a cusotom implementation of a served http resource.
@@ -39,13 +39,13 @@ class PeekPlatformDesktopHttpHookABC(metaclass=ABCMeta):
 
         """
         pluginSubPath = pluginSubPath.strip(b'/')
-        self.__rootDesktopResource.putChild(pluginSubPath, resource)
+        self.__rootOfficeResource.putChild(pluginSubPath, resource)
 
     @property
-    def rootDesktopResource(self) -> BasicResource:
+    def rootOfficeResource(self) -> BasicResource:
         """ Site Root Resource
 
         This returns the root site resource for this plugin.
 
         """
-        return self.__rootDesktopResource
+        return self.__rootOfficeResource

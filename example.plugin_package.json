@@ -15,7 +15,7 @@
   },
   // The Peek Platform services that this plugin needs to run
   "requiresServices": [
-    "server",
+    "logic",
     "worker",
     "agent",
     "field",
@@ -33,7 +33,7 @@
     "angularMainModule": "plugin-noop.module"
   },
   // Settings specific to the peek_logic_service service
-  "server": {
+  "logic": {
     // The directory where the angular2 route is for server admin site
     // EG "frontend/client"
     "angularFrontendAppDir": "server_fe",

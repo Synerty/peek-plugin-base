@@ -4,7 +4,7 @@ from txhttputil.site.BasicResource import BasicResource
 from txhttputil.site.FileUnderlayResource import FileUnderlayResource
 
 
-class PeekPlatformMobileHttpHookABC(metaclass=ABCMeta):
+class PeekPlatformFieldHttpHookABC(metaclass=ABCMeta):
     """ Peek Platform Site HTTP Hook
 
     The methods provided by this class apply to the HTTP sites served by the
@@ -16,9 +16,9 @@ class PeekPlatformMobileHttpHookABC(metaclass=ABCMeta):
 
     """
     def __init__(self):
-        self.__rootMobileResource = FileUnderlayResource()
+        self.__rootFieldResource = FileUnderlayResource()
 
-    def addMobileStaticResourceDir(self, dir: str) -> None:
+    def addFieldStaticResourceDir(self, dir: str) -> None:
         """ Add Site Static Resource Directory
 
         Calling this method sets up directory :code:`dir` to be served by the site.
@@ -26,9 +26,9 @@ class PeekPlatformMobileHttpHookABC(metaclass=ABCMeta):
         :param dir: The file system directory to be served.
         :return: None
         """
-        self.__rootMobileResource.addFileSystemRoot(dir)
+        self.__rootFieldResource.addFileSystemRoot(dir)
 
-    def addMobileResource(self, pluginSubPath: bytes, resource: BasicResource) -> None:
+    def addFieldResource(self, pluginSubPath: bytes, resource: BasicResource) -> None:
         """ Add Site Resource
 
         Add a cusotom implementation of a served http resource.
@@ -39,13 +39,13 @@ class PeekPlatformMobileHttpHookABC(metaclass=ABCMeta):
 
         """
         pluginSubPath = pluginSubPath.strip(b'/')
-        self.__rootMobileResource.putChild(pluginSubPath, resource)
+        self.__rootFieldResource.putChild(pluginSubPath, resource)
 
     @property
-    def rootMobileResource(self) -> BasicResource:
+    def rootFieldResource(self) -> BasicResource:
         """ Site Root Resource
 
         This returns the root site resource for this plugin.
 
         """
-        return self.__rootMobileResource
+        return self.__rootFieldResource

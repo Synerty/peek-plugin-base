@@ -35,7 +35,7 @@ class MyClass(MyABC, MyMixin):
     def propB(self):
         return "b"
 
-class PluginServerEntryHookInheritenceTest(unittest.TestCase):
+class PluginLogicEntryHookInheritenceTest(unittest.TestCase):
     def testPropANotImplemeneted(self):
         self.assertRaises(TypeError, lambda : MyClassNoPropA())
 

@@ -10,7 +10,7 @@ from peek_plugin_base.server.PeekServerPlatformHookABC import PeekServerPlatform
 from peek_plugin_base.storage.DbConnection import DbConnection
 
 
-class PluginServerEntryHookABC(PluginCommonEntryHookABC):
+class PluginLogicEntryHookABC(PluginCommonEntryHookABC):
     def __init__(self, pluginName: str, pluginRootDir: str, platform: PeekServerPlatformHookABC):
         PluginCommonEntryHookABC.__init__(self, pluginName=pluginName, pluginRootDir=pluginRootDir)
         self._platform = platform
