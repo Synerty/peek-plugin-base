@@ -4,8 +4,11 @@ peekServerName = "peek-logic-service"
 #: The vortex name for the Storage service
 peekStorageName = "peek-storage-service"
 
-#: The vortex name for the Client service
-peekClientName = "peek-office-service"
+#: The vortex name for the Field service
+peekFieldName = "peek-field-service"
+
+# The vortex name for the Office service
+peekOfficeName = "peek-office-service"
 
 #: The vortex name for the Agent service
 peekAgentName = "peek-agent-service"
@@ -21,3 +24,6 @@ peekDesktopName = "peek-office-app"
 
 #: The vortex name for the Admin browser client
 peekAdminName = "peek-admin-app"
+
+# The vortex name group for the Peek the client service names
+peekBackendNames = (peekFieldName, peekOfficeName)
