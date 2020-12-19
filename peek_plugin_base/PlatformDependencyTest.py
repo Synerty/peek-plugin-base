@@ -2,7 +2,9 @@ import subprocess
 import unittest
 from os import path
 from typing import List
+import logging
 
+logger = logging.getLogger(__name__)
 
 class PlatformDependencyTestCaseBase(unittest.TestCase):
     _excludeLinesContaining = (
@@ -13,19 +15,22 @@ class PlatformDependencyTestCaseBase(unittest.TestCase):
     )
 
     _checkForUnderscoresCmd = 'cd "%s" && grep -R peek_plugin .' \
-                              ' | grep -v peek_plugin_base'
+                          ' | grep -v -e peek_plugin_base -e  __pycache__'
 
     _checkForHyphensCmd = 'cd "%s" && grep -R peek-plugin .' \
-                          ' | grep -v peek-plugin-base'
+                          ' | grep -v -e peek-plugin-base -e  __pycache__'
 
     def _runCmd(self, cmd: str):
         cmdOut = subprocess.check_output(['bash', '-c', cmd + ' || true '])
+
+        logger.info("Running command: %s", cmdOut)
+        
         errors = self.__convertErrors(cmdOut)
 
         for error in errors:
-            print('ERROR: ' + error)
+            logger.error(error)
 
-        self.assertEqual(len(errors), 0)
+        self.assertFalse(errors)
 
     def __convertErrors(self, cmdOut: bytes) -> List[str]:
         errors = cmdOut.decode().strip()
