@@ -1,5 +1,6 @@
 from logging import Logger
 from typing import Callable, Dict, Optional
+from collections import namedtuple
 
 from peek_plugin_base.storage.DbConnection import DbSessionCreator
 from sqlalchemy.sql import Select
