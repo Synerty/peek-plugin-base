@@ -32,7 +32,9 @@ class PlatformDependencyTestCaseBase(unittest.TestCase):
             return []
 
         errors = errors.split('\n')
-        errors = filter(lambda e: not [e in t for t in self._excludeLinesContaining],
+        errors = filter(lambda e: not [e
+                                   for t in self._excludeLinesContaining
+                                   if t in e ],
                         errors)
 
         return list(errors)
