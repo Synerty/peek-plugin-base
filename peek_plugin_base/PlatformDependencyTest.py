@@ -8,6 +8,8 @@ class PlatformDependencyTestCaseBase(unittest.TestCase):
     _excludeLinesContaining = (
         # Exclude examples from docstrings
         'from peek_plugin_example',
+        # Exclude this file
+        'PlatformDependencyTest.py',
     )
 
     _checkForUnderscoresCmd = 'cd "%s" && grep -R peek_plugin .' \
@@ -42,6 +44,9 @@ class PlatformDependencyTestCaseBase(unittest.TestCase):
 
 class PlatformDependencyTestCase(PlatformDependencyTestCaseBase):
     def setUp(self):
+        self._excludeLinesContaining += (
+            'Example from peek_plugin_noop.storage.DeclarativeBase.py',
+        )
         self._pkgPath = path.dirname(__file__)
 
     def test_for_plugin_references_1(self):
