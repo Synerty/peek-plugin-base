@@ -1,12 +1,12 @@
 from logging import Logger
 from typing import Callable, Dict, Optional
 
+from peek_plugin_base.storage.DbConnection import DbSessionCreator
 from sqlalchemy.sql import Select
 from twisted.internet.defer import Deferred
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 
-from peek_plugin_base.storage.DbConnection import DbSessionCreator
-from peek_storage_service.plpython.LoadPayloadPgUtil import LoadPayloadTupleResult
+LoadPayloadTupleResult = namedtuple("LoadPayloadTupleResult", ['count', 'encodedPayload'])
 
 
 def getTuplesPayload(logger: Logger,
@@ -25,7 +25,8 @@ def getTuplesPayloadBlocking(dbSessionCreator: DbSessionCreator,
                              sqlCoreLoadTupleClassmethod: Callable,
                              payloadFilt: Optional[Dict] = None,
                              fetchSize=50) -> LoadPayloadTupleResult:
-    from peek_storage_service.plpython.LoadPayloadPgUtil import callPGLoadPayloadTuplesBlocking
+    from peek_storage_service.plpython.LoadPayloadPgUtil import \
+        callPGLoadPayloadTuplesBlocking
     return callPGLoadPayloadTuplesBlocking(dbSessionCreator,
                                            sql,
                                            sqlCoreLoadTupleClassmethod,
