@@ -50,8 +50,8 @@ requirements = [
 
     # Protocol and data packages
     "pytmpdir >= 0.2.3",  # A temporary directory, useful for extracting archives to
-    "txhttputil >= 1.0.1",  # Utility class for http requests
-    "vortexpy >= 2.1.1",  # Data serialisation and transport layer, observable based
+    "txhttputil >= 1.0.2",  # Utility class for http requests
+    "vortexpy >= 2.1.3",  # Data serialisation and transport layer, observable based
 
     # SOAP interface packages
     "SOAPpy-py3 >= 0.52.24",  # See http://soappy.ooz.ie for tutorials
