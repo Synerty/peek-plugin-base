@@ -53,27 +53,18 @@ class AlembicEnvBase:
         )
         with connectable.connect() as connection:
             ensureSchemaExists(connectable, self._schemaName)
-            peekSchemas = [
-                row[0]
-                for row in connection.execute(
-                    """SELECT SCHEMA_NAME FROM
-                      INFORMATION_SCHEMA.SCHEMATA
-                      WHERE SCHEMA_OWNER = 'peek';"""
-                )
-            ]
-            for peekSchema in peekSchemas:
-                log.info("Migrating Peek schema %s" % peekSchema)
-                schemaWiseConnection = connection.execution_options(
-                    schema_translate_map={None: peekSchema}
-                )
-                context.configure(
-                    connection=schemaWiseConnection,
-                    target_metadata=self._targetMetadata,
-                    include_object=self._includeObjectFilter,
-                    include_schemas=False,
-                    # process_revision_directives=self._process_revision_directives,
-                    version_table_schema=self._schemaName,
-                )
-                # schema-wise transactions
-                with context.begin_transaction():
-                    context.run_migrations()
+            log.info("Migrating Peek schema %s" % self._schemaName)
+            schemaWiseConnection = connection.execution_options(
+                schema_translate_map={None: self._schemaName}
+            )
+            context.configure(
+                connection=schemaWiseConnection,
+                target_metadata=self._targetMetadata,
+                include_object=self._includeObjectFilter,
+                include_schemas=False,
+                # process_revision_directives=self._process_revision_directives,
+                version_table_schema=self._schemaName,
+            )
+            # schema-wise transactions
+            with context.begin_transaction():
+                context.run_migrations()
