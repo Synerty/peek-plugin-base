@@ -17,13 +17,15 @@ def _createMssqlSqlText(values: List[Union[int, str]]) -> str:
         values = [str(v) for v in values]
 
     else:
-        raise NotImplementedError("The value supplies isn't a str or int, %s", values[0])
+        raise NotImplementedError(
+            "The value supplies isn't a str or int, %s", values[0]
+        )
 
-    return text("SELECT * FROM [dbo].[%s]('%s')" % (name, ','.join(values)))
+    return text("SELECT * FROM [dbo].[%s]('%s')" % (name, ",".join(values)))
 
 
 def makeOrmValuesSubqueryCondition(ormSession, column, values: List[Union[int, str]]):
-    """ Make Orm Values Subquery
+    """Make Orm Values Subquery
 
     :param ormSession: The orm session instance
     :param column: The column from the Declarative table, eg TableItem.colName
@@ -44,7 +46,7 @@ def makeOrmValuesSubqueryCondition(ormSession, column, values: List[Union[int, s
 
 
 def makeCoreValuesSubqueryCondition(engine, column, values: List[Union[int, str]]):
-    """ Make Core Values Subquery
+    """Make Core Values Subquery
 
     :param engine: The database engine, used to determine the dialect
     :param column: The column, eg TableItem.__table__.c.colName
@@ -60,4 +62,3 @@ def makeCoreValuesSubqueryCondition(engine, column, values: List[Union[int, str]
     sql = _createMssqlSqlText(values)
 
     return column.in_(sql)
-

@@ -13,7 +13,7 @@ from peek_plugin_base.storage.DbConnection import DbConnection, DbSessionCreator
 
 class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
     def _migrateStorageSchema(self, metadata: MetaData) -> None:
-        """ Initialise the DB
+        """Initialise the DB
 
         This method is called by the platform between the load() and start() calls.
         There should be no need for a plugin to call this method it's self.
@@ -24,20 +24,21 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
 
         relDir = self._packageCfg.config.storage.alembicDir(require_string)
         alembicDir = os.path.join(self.rootDir, relDir)
-        if not os.path.isdir(alembicDir): raise NotADirectoryError(alembicDir)
+        if not os.path.isdir(alembicDir):
+            raise NotADirectoryError(alembicDir)
 
         self._dbConn = DbConnection(
             dbConnectString=self.platform.dbConnectString,
             metadata=metadata,
             alembicDir=alembicDir,
-            enableCreateAll=False
+            enableCreateAll=False,
         )
 
         self._dbConn.migrate()
 
     @property
     def dbSessionCreator(self) -> DbSessionCreator:
-        """ Database Session
+        """Database Session
 
         This is a helper property that can be used by the papp to get easy access to
         the SQLAlchemy C{Session}
@@ -49,7 +50,7 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
 
     @property
     def dbEngine(self) -> Engine:
-        """ DB Engine
+        """DB Engine
 
         This is a helper property that can be used by the papp to get easy access to
         the SQLAlchemy C{Engine}
@@ -60,7 +61,7 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
         return self._dbConn._dbEngine
 
     def prefetchDeclarativeIds(self, Declarative, count) -> Deferred:
-        """ Get PG Sequence Generator
+        """Get PG Sequence Generator
 
         A PostGreSQL sequence generator returns a chunk of IDs for the given
         declarative.
@@ -73,7 +74,7 @@ class PluginServerStorageEntryHookABC(metaclass=ABCMeta):
 
     @abstractproperty
     def dbMetadata(self) -> MetaData:
-        """ DB Metadata
+        """DB Metadata
 
         This property returns an instance to the metadata from the ORM Declarative
          on which, all the ORM classes have inherited.

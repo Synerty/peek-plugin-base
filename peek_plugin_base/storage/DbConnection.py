@@ -5,8 +5,11 @@ from threading import Lock
 from typing import Optional, Dict, Union, Callable, Iterable
 
 import sqlalchemy_utils
-from peek_plugin_base.storage.AlembicEnvBase import ensureSchemaExists, isMssqlDialect, \
-    isPostGreSQLDialect
+from peek_plugin_base.storage.AlembicEnvBase import (
+    ensureSchemaExists,
+    isMssqlDialect,
+    isPostGreSQLDialect,
+)
 from pytmpdir.Directory import Directory
 from sqlalchemy import create_engine, Integer
 from sqlalchemy.engine.base import Engine
@@ -26,10 +29,16 @@ DeclarativeIdCreator = Callable[[object, int], DelcarativeIdGen]
 
 
 class DbConnection:
-    def __init__(self, dbConnectString: str, metadata: MetaData, alembicDir: str,
-                 dbEngineArgs: Optional[Dict[str, Union[str, int]]] = None,
-                 enableForeignKeys=False, enableCreateAll=True):
-        """ SQLAlchemy Database Connection
+    def __init__(
+        self,
+        dbConnectString: str,
+        metadata: MetaData,
+        alembicDir: str,
+        dbEngineArgs: Optional[Dict[str, Union[str, int]]] = None,
+        enableForeignKeys=False,
+        enableCreateAll=True,
+    ):
+        """SQLAlchemy Database Connection
 
         This class takes care of migrating the database and establishing thing database
         connections and ORM sessions.
@@ -71,7 +80,7 @@ class DbConnection:
         self._enableCreateAll = enableCreateAll
 
     def closeAllSessions(self):
-        """ Close All Session
+        """Close All Session
 
         Close all ORM sessions connected to this DB engine.
 
@@ -81,7 +90,7 @@ class DbConnection:
 
     @property
     def ormSessionCreator(self) -> DbSessionCreator:
-        """ Get Orm Session
+        """Get Orm Session
 
         :return: A SQLAlchemy session scoped for the callers thread..
         """
@@ -90,14 +99,13 @@ class DbConnection:
         if self._ScopedSession:
             return self._ScopedSession
 
-        self._ScopedSession = scoped_session(
-            sessionmaker(bind=self.dbEngine))
+        self._ScopedSession = scoped_session(sessionmaker(bind=self.dbEngine))
 
         return self._ScopedSession
 
     @property
     def dbEngine(self) -> Engine:
-        """ Get DB Engine
+        """Get DB Engine
 
         This is not thread safe, use the ormSesson to execute SQL statements instead.
         self.ormSession.execute(...)
@@ -106,15 +114,12 @@ class DbConnection:
 
         """
         if self._dbEngine is None:
-            self._dbEngine = create_engine(
-                self._dbConnectString,
-                **self._dbEngineArgs
-            )
+            self._dbEngine = create_engine(self._dbConnectString, **self._dbEngineArgs)
 
         return self._dbEngine
 
     def migrate(self) -> None:
-        """ Migrate
+        """Migrate
 
         Perform a database migration, upgrading to the latest schema level.
         """
@@ -123,8 +128,8 @@ class DbConnection:
 
         connection = self._dbEngine.connect()
         isDbInitialised = self._dbEngine.dialect.has_table(
-            connection, 'alembic_version',
-            schema=self._metadata.schema)
+            connection, "alembic_version", schema=self._metadata.schema
+        )
         connection.close()
 
         if isDbInitialised or not self._enableCreateAll:
@@ -137,14 +142,15 @@ class DbConnection:
             self.checkForeignKeys(self._dbEngine)
 
     def checkForeignKeys(self, engine: Engine) -> None:
-        """ Check Foreign Keys
+        """Check Foreign Keys
 
         Log any foreign keys that don't have indexes assigned to them.
         This is a performance issue.
 
         """
-        missing = (sqlalchemy_utils.functions
-                   .non_indexed_foreign_keys(self._metadata, engine=engine))
+        missing = sqlalchemy_utils.functions.non_indexed_foreign_keys(
+            self._metadata, engine=engine
+        )
 
         for table, keys in missing.items():
             for key in keys:
@@ -152,7 +158,7 @@ class DbConnection:
 
     @deferToThreadWrapWithLogger(logger)
     def prefetchDeclarativeIds(self, Declarative, count) -> DelcarativeIdGen:
-        """ Prefetch Declarative IDs
+        """Prefetch Declarative IDs
 
         This function prefetches a chunk of IDs from a database sequence.
         Doing this allows us to preallocate the IDs before an insert, which significantly
@@ -176,6 +182,7 @@ class DbConnection:
         configFile = self._writeAlembicIni()
 
         from alembic.config import Config
+
         alembic_cfg = Config(configFile.name)
         command(alembic_cfg, *args)
 
@@ -184,10 +191,11 @@ class DbConnection:
         self._metadata.create_all(engine)
 
         from alembic import command
+
         self._runAlembicCommand(command.stamp, "head")
 
     def _writeAlembicIni(self):
-        cfg = '''
+        cfg = """
         [alembic]
         script_location = %(alembicDir)s
 
@@ -199,11 +207,10 @@ class DbConnection:
 
         [logging]
         default_level = INFO
-        '''
+        """
         cfg = dedent(cfg)
 
-        cfg %= {'alembicDir': self._alembicDir,
-                'url': self._dbConnectString}
+        cfg %= {"alembicDir": self._alembicDir, "url": self._dbConnectString}
 
         dir = Directory()
         file = dir.createTempFile()
@@ -217,6 +224,7 @@ class DbConnection:
         ensureSchemaExists(engine, self._metadata.schema)
 
         from alembic import command
+
         self._runAlembicCommand(command.upgrade, "head")
 
 
@@ -230,10 +238,10 @@ def convertToCoreSqlaInsert(ormObj, Declarative):
             Col = getattr(Declarative, fieldName)
             if isinstance(Col, InstrumentedAttribute):
                 value = Col.server_default.arg if Col.server_default else None
-                if value == 'false':
+                if value == "false":
                     value = False
 
-                elif value == 'true':
+                elif value == "true":
                     value = True
 
         insertDict[fieldName] = value
@@ -246,39 +254,47 @@ def pgCopyInsert(rawConn, table, inserts):
 
     def convert(index, val):
         if val is None:
-            return '\\N'
+            return "\\N"
 
         if isinstance(colTypes[index], Integer):
-            return str(val).split('.')[0]
+            return str(val).split(".")[0]
 
-        return str(val).replace('\\', '\\\\') \
-            .replace('\t', '\\t') \
-            .replace('\n', '\\n') \
-            .replace('\r', '\\r')
+        return (
+            str(val)
+            .replace("\\", "\\\\")
+            .replace("\t", "\\t")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+        )
 
-    columns = [str(c).split('.')[1] for c in table.c]
+    columns = [str(c).split(".")[1] for c in table.c]
     f = StringIO()
     for insert in inserts:
-        line = ''
+        line = ""
         for i, c in enumerate(columns):
             line += convert(i, insert[c])
-            line += '\n' if i == len(columns) - 1 else '\t'
+            line += "\n" if i == len(columns) - 1 else "\t"
 
         f.write(line)
 
     f.seek(0)
 
     cursor = rawConn.cursor()
-    cursor.copy_from(f, '"%s"."%s"' % (table.schema, table.name),
-                     sep='\t', null='\\N',
-                     columns=tuple(['"%s"' % c for c in columns]))
+    cursor.copy_from(
+        f,
+        '"%s"."%s"' % (table.schema, table.name),
+        sep="\t",
+        null="\\N",
+        columns=tuple(['"%s"' % c for c in columns]),
+    )
     f.close()
     cursor.close()
 
 
-def _commonPrefetchDeclarativeIds(engine, mutex,
-                                  Declarative, count) -> Optional[Iterable[int]]:
-    """ Common Prefetch Declarative IDs
+def _commonPrefetchDeclarativeIds(
+    engine, mutex, Declarative, count
+) -> Optional[Iterable[int]]:
+    """Common Prefetch Declarative IDs
 
     This function is used by the worker and server
     """
@@ -290,28 +306,32 @@ def _commonPrefetchDeclarativeIds(engine, mutex,
     transaction = conn.begin()
     mutex.acquire()
     try:
-        sequence = Sequence('%s_id_seq' % Declarative.__tablename__,
-                            schema=Declarative.metadata.schema)
+        sequence = Sequence(
+            "%s_id_seq" % Declarative.__tablename__, schema=Declarative.metadata.schema
+        )
 
         if isPostGreSQLDialect(engine):
-            sql = "SELECT setval('%(seq)s', (select nextval('%(seq)s') + %(add)s), true)"
-            sql %= {
-                'seq': '"%s"."%s"' % (sequence.schema, sequence.name),
-                'add': count
-            }
+            sql = (
+                "SELECT setval('%(seq)s', (select nextval('%(seq)s') + %(add)s), true)"
+            )
+            sql %= {"seq": '"%s"."%s"' % (sequence.schema, sequence.name), "add": count}
             nextStartId = conn.execute(sql).fetchone()[0]
             startId = nextStartId - count
 
         elif isMssqlDialect(engine):
-            startId = conn.execute(
-                'SELECT NEXT VALUE FOR "%s"."%s"'
-                % (sequence.schema, sequence.name)
-            ).fetchone()[0] + 1
+            startId = (
+                conn.execute(
+                    'SELECT NEXT VALUE FOR "%s"."%s"' % (sequence.schema, sequence.name)
+                ).fetchone()[0]
+                + 1
+            )
 
             nextStartId = startId + count
 
-            conn.execute('alter sequence "%s"."%s" restart with %s'
-                         % (sequence.schema, sequence.name, nextStartId))
+            conn.execute(
+                'alter sequence "%s"."%s" restart with %s'
+                % (sequence.schema, sequence.name, nextStartId)
+            )
 
         else:
             raise NotImplementedError()

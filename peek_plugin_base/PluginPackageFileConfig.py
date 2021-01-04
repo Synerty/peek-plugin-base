@@ -1,5 +1,3 @@
-
-
 import logging
 import os
 
@@ -23,20 +21,21 @@ class PluginPackageFileConfig(object):
 
         """
         self._pluginRoot = pluginRootDir
-        if not os.path.isdir(self._pluginRoot): raise NotADirectoryError(self._pluginRoot)
+        if not os.path.isdir(self._pluginRoot):
+            raise NotADirectoryError(self._pluginRoot)
 
-        self._configFilePath = os.path.join(pluginRootDir, 'plugin_package.json')
+        self._configFilePath = os.path.join(pluginRootDir, "plugin_package.json")
 
         if not os.path.isfile(self._configFilePath):
-            assert (not os.path.exists(self._configFilePath))
-            with open(self._configFilePath, 'w') as fobj:
-                fobj.write('{}')
+            assert not os.path.exists(self._configFilePath)
+            with open(self._configFilePath, "w") as fobj:
+                fobj.write("{}")
 
         self._cfg = load_config(self._configFilePath)
 
     @property
     def config(self) -> ConfigNode:
-        """ Config
+        """Config
 
         :return: The jsoncfg config object, for accessing and saving the config.
         """

@@ -13,7 +13,7 @@ class PluginCommonEntryHookABC(metaclass=ABCMeta):
 
     @property
     def name(self) -> str:
-        """ Plugin Name
+        """Plugin Name
 
         :return: The name of this plugin
         """
@@ -21,7 +21,7 @@ class PluginCommonEntryHookABC(metaclass=ABCMeta):
 
     @property
     def rootDir(self) -> str:
-        """ Plugin Root Dir
+        """Plugin Root Dir
 
         :return: The absolute directory where the Plugin package is located.
         """
@@ -29,7 +29,7 @@ class PluginCommonEntryHookABC(metaclass=ABCMeta):
 
     @property
     def packageCfg(self) -> PluginPackageFileConfig:
-        """ Package Config
+        """Package Config
 
         :return: A reference to the plugin_package.json loader object (see json-cfg)
         """
@@ -37,7 +37,7 @@ class PluginCommonEntryHookABC(metaclass=ABCMeta):
 
     @abstractmethod
     def load(self) -> None:
-        """ Load
+        """Load
 
         This will be called when the plugin is loaded, just after the db is migrated.
         Place any custom initialiastion steps here.
@@ -46,7 +46,7 @@ class PluginCommonEntryHookABC(metaclass=ABCMeta):
 
     @abstractmethod
     def start(self) -> None:
-        """ Start
+        """Start
 
         This method is called by the platform when the plugin should start
         """
@@ -54,7 +54,7 @@ class PluginCommonEntryHookABC(metaclass=ABCMeta):
 
     @abstractmethod
     def stop(self) -> None:
-        """ Stop
+        """Stop
 
         This method is called by the platform to tell the peek app to shutdown and stop
         everything it's doing
@@ -72,7 +72,7 @@ class PluginCommonEntryHookABC(metaclass=ABCMeta):
 
     @property
     def title(self) -> str:
-        """ Peek App Title
+        """Peek App Title
         :return the title of this plugin
         """
         return self._packageCfg.config.plugin.title(require_string)

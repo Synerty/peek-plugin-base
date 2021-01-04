@@ -4,7 +4,6 @@ from setuptools import setup
 
 from setuptools import find_packages
 
-
 ###############################################################################
 # Define variables
 #
@@ -12,15 +11,15 @@ from setuptools import find_packages
 #
 
 author = "Synerty"
-author_email = 'contact@synerty.com'
+author_email = "contact@synerty.com"
 py_package_name = "peek_plugin_base"
-pip_package_name = py_package_name.replace('_', '-')
-package_version = '0.0.0'
-description = 'Peek Plugin Base.'
+pip_package_name = py_package_name.replace("_", "-")
+package_version = "0.0.0"
+description = "Peek Plugin Base."
 
-download_url = 'https://bitbucket.org/synerty/%s/get/%s.zip'
+download_url = "https://bitbucket.org/synerty/%s/get/%s.zip"
 download_url %= pip_package_name, package_version
-url = 'https://bitbucket.org/synerty/%s' % pip_package_name
+url = "https://bitbucket.org/synerty/%s" % pip_package_name
 
 ###############################################################################
 
@@ -29,8 +28,8 @@ egg_info = "%s.egg-info" % pip_package_name
 if os.path.isdir(egg_info):
     shutil.rmtree(egg_info)
 
-if os.path.isfile('MANIFEST'):
-    os.remove('MANIFEST')
+if os.path.isfile("MANIFEST"):
+    os.remove("MANIFEST")
 
 requirements = [
     # Database packages
@@ -38,36 +37,29 @@ requirements = [
     "SQLAlchemy-Utils >= 0.32.9",
     "alembic >= 0.8.7",  # Database migration utility
     "GeoAlchemy2",  # Geospatial addons to SQLAlchemy
-
     # networking and async framework. Peek is based on Twisted.
     "Twisted[tls,conch]",
-
     # Celery packages
     "txcelery-py3 >= 1.6.3",
-
     # The package for RW support
     "json-cfg-rw",
-
     # Protocol and data packages
-    "pytmpdir >= 0.2.3",  # A temporary directory, useful for extracting archives to
+    "pytmpdir >= 0.2.3",
+    # A temporary directory, useful for extracting archives to
     "txhttputil >= 1.0.2",  # Utility class for http requests
-    "vortexpy >= 2.1.3",  # Data serialisation and transport layer, observable based
-
+    "vortexpy >= 2.1.3",
+    # Data serialisation and transport layer, observable based
     # SOAP interface packages
     "SOAPpy-py3 >= 0.52.24",  # See http://soappy.ooz.ie for tutorials
     "wstools-py3 >= 0.54.2",
     "txsuds-py3 >= 0.5.9",
-
     # RxPY by Microsoft. Used everywhere
     # TODO Upgrade to rx 3.x.x
     "rx < 3.0.0",
-
     # Improve datetime support
     "pytz",
-    "tzlocal"
-
+    "tzlocal",
 ]
-
 
 ###############################################################################
 # Define the dependencies
@@ -91,6 +83,6 @@ setup(
     author_email=author_email,
     url=url,
     download_url=download_url,
-    keywords=['Peek', 'Python', 'Platform', 'synerty'],
+    keywords=["Peek", "Python", "Platform", "synerty"],
     classifiers=[],
 )

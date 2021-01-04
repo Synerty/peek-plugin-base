@@ -7,8 +7,12 @@ from peek_plugin_base.client.PeekClientPlatformHookABC import PeekClientPlatform
 
 
 class PluginClientEntryHookABC(PluginCommonEntryHookABC):
-    def __init__(self, pluginName: str, pluginRootDir: str, platform: PeekClientPlatformHookABC):
-        PluginCommonEntryHookABC.__init__(self, pluginName=pluginName, pluginRootDir=pluginRootDir)
+    def __init__(
+        self, pluginName: str, pluginRootDir: str, platform: PeekClientPlatformHookABC
+    ):
+        PluginCommonEntryHookABC.__init__(
+            self, pluginName=pluginName, pluginRootDir=pluginRootDir
+        )
         self._platform = platform
 
     @property
@@ -21,7 +25,7 @@ class PluginClientEntryHookABC(PluginCommonEntryHookABC):
 
     @property
     def angularMainModule(self) -> str:
-        """ Angular Main Module
+        """Angular Main Module
 
         :return: The name of the main module that the Angular2 router will lazy load.
         """
@@ -29,7 +33,7 @@ class PluginClientEntryHookABC(PluginCommonEntryHookABC):
 
     @property
     def angularFrontendAppDir(self) -> str:
-        """ Angular Frontend Dir
+        """Angular Frontend Dir
 
         This directory will be linked into the angular app when it is compiled.
 
@@ -37,5 +41,6 @@ class PluginClientEntryHookABC(PluginCommonEntryHookABC):
         """
         relDir = self._packageCfg.config.plugin.title(require_string)
         dir = os.path.join(self._pluginRoot, relDir)
-        if not os.path.isdir(dir): raise NotADirectoryError(dir)
+        if not os.path.isdir(dir):
+            raise NotADirectoryError(dir)
         return dir

@@ -25,8 +25,8 @@ class MyClassNoPropB(MyABC, MyMixin):
     def propA(self):
         return "a"
 
-class MyClass(MyABC, MyMixin):
 
+class MyClass(MyABC, MyMixin):
     @property
     def propA(self):
         return "a"
@@ -35,12 +35,13 @@ class MyClass(MyABC, MyMixin):
     def propB(self):
         return "b"
 
+
 class PluginLogicEntryHookInheritenceTest(unittest.TestCase):
     def testPropANotImplemeneted(self):
-        self.assertRaises(TypeError, lambda : MyClassNoPropA())
+        self.assertRaises(TypeError, lambda: MyClassNoPropA())
 
     def testPropBNotImplemeneted(self):
-        self.assertRaises(TypeError, lambda : MyClassNoPropB())
+        self.assertRaises(TypeError, lambda: MyClassNoPropB())
 
     def testIsInstance(self):
         myClass = MyClass()

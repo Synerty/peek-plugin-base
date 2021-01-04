@@ -3,10 +3,9 @@ from typing import Optional
 
 
 class PeekPlatformCommonHookABC(metaclass=ABCMeta):
-
     @abstractmethod
     def getOtherPluginApi(self, pluginName: str) -> Optional[object]:
-        """ Get Other Plugin Api
+        """Get Other Plugin Api
 
         Asks the plugin for it's api object and return it to this plugin.
         The API returned matches the platform service.
@@ -19,7 +18,7 @@ class PeekPlatformCommonHookABC(metaclass=ABCMeta):
     @property
     @abstractmethod
     def serviceId(self) -> str:
-        """ Service ID
+        """Service ID
 
         Return a unique identifier for this service.
         """

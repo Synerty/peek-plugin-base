@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 
 
 class PeekPlatformFileStorageHookABC(metaclass=ABCMeta):
-    """ Peek Platform File Storage Hook
+    """Peek Platform File Storage Hook
 
     This ABC provides methods allowing plugins to use the file system.
 
@@ -16,7 +16,7 @@ class PeekPlatformFileStorageHookABC(metaclass=ABCMeta):
     @property
     @abstractmethod
     def fileStorageDirectory(self) -> Path:
-        """ File Storage Directory
+        """File Storage Directory
 
         This method returns a Path object providing access to the managed
         file storage location where the plugin can persistently store any files it

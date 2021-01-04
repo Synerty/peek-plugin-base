@@ -11,8 +11,12 @@ from peek_plugin_base.storage.DbConnection import DbConnection
 
 
 class PluginLogicEntryHookABC(PluginCommonEntryHookABC):
-    def __init__(self, pluginName: str, pluginRootDir: str, platform: PeekServerPlatformHookABC):
-        PluginCommonEntryHookABC.__init__(self, pluginName=pluginName, pluginRootDir=pluginRootDir)
+    def __init__(
+        self, pluginName: str, pluginRootDir: str, platform: PeekServerPlatformHookABC
+    ):
+        PluginCommonEntryHookABC.__init__(
+            self, pluginName=pluginName, pluginRootDir=pluginRootDir
+        )
         self._platform = platform
 
     @property
@@ -20,7 +24,7 @@ class PluginLogicEntryHookABC(PluginCommonEntryHookABC):
         return self._platform
 
     def migrateStorageSchema(self, metadata: MetaData) -> None:
-        """ Initialise the DB
+        """Initialise the DB
 
         :param metadata: the SQLAlchemy metadata for this plugins schema
 
@@ -28,20 +32,21 @@ class PluginLogicEntryHookABC(PluginCommonEntryHookABC):
 
         relDir = self._packageCfg.config.storage.alembicDir(require_string)
         alembicDir = os.path.join(self.rootDir, relDir)
-        if not os.path.isdir(alembicDir): raise NotADirectoryError(alembicDir)
+        if not os.path.isdir(alembicDir):
+            raise NotADirectoryError(alembicDir)
 
         self._dbConn = DbConnection(
             # Ingore this typing error, it's a bug in pycharm
             dbConnectString=str(self.platform.dbConnectString),
             metadata=metadata,
-            alembicDir=alembicDir
+            alembicDir=alembicDir,
         )
 
         self._dbConn.migrate()
 
     @property
     def dbSession(self) -> Session:
-        """ Database Session
+        """Database Session
 
         :return: An instance of the sqlalchemy ORM session
 
@@ -50,7 +55,7 @@ class PluginLogicEntryHookABC(PluginCommonEntryHookABC):
 
     @property
     def publishedServerApi(self) -> Optional[object]:
-        """ Published Server API
+        """Published Server API
 
         :return  class that implements the API that can be used by other PLUGINs on this
         platform.

@@ -18,8 +18,9 @@ __dbEngine = None
 __ScopedSession = None
 _isWindows = platform.system() is "Windows"
 
+
 def setConnStringForWindows():
-    """ Set Conn String for Windiws
+    """Set Conn String for Windiws
 
     Windows has a different way of forking processes, which causes the
     @worker_process_init.connect signal not to work in "CeleryDbConnInit"
@@ -29,12 +30,12 @@ def setConnStringForWindows():
     global _dbConnectString
     global _dbEngineArgs
     from peek_platform.file_config.PeekFileConfigABC import PeekFileConfigABC
-    from peek_platform.file_config.PeekFileConfigSqlAlchemyMixin import \
-        PeekFileConfigSqlAlchemyMixin
+    from peek_platform.file_config.PeekFileConfigSqlAlchemyMixin import (
+        PeekFileConfigSqlAlchemyMixin,
+    )
     from peek_platform import PeekPlatformConfig
 
-    class _WorkerTaskConfigMixin(PeekFileConfigABC,
-                           PeekFileConfigSqlAlchemyMixin):
+    class _WorkerTaskConfigMixin(PeekFileConfigABC, PeekFileConfigSqlAlchemyMixin):
         pass
 
     PeekPlatformConfig.componentName = peekWorkerName
@@ -50,6 +51,7 @@ def getDbEngine():
     if _dbConnectString is None:
         if _isWindows:
             from peek_platform.ConfigCeleryApp import configureCeleryLogging
+
             configureCeleryLogging()
             setConnStringForWindows()
 
@@ -59,10 +61,7 @@ def getDbEngine():
             raise Exception(msg)
 
     if not __dbEngine:
-        __dbEngine = create_engine(
-            _dbConnectString,
-            **_dbEngineArgs
-        )
+        __dbEngine = create_engine(_dbConnectString, **_dbEngineArgs)
 
     return __dbEngine
 
@@ -80,7 +79,7 @@ _sequenceMutex = Lock()
 
 
 def prefetchDeclarativeIds(Declarative, count) -> Optional[Iterable[int]]:
-    """ Prefetch Declarative IDs
+    """Prefetch Declarative IDs
 
     This function prefetches a chunk of IDs from a database sequence.
     Doing this allows us to preallocate the IDs before an insert, which significantly

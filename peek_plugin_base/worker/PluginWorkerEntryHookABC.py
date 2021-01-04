@@ -6,10 +6,12 @@ from peek_plugin_base.worker.PeekWorkerPlatformHookABC import PeekWorkerPlatform
 
 
 class PluginWorkerEntryHookABC(PluginCommonEntryHookABC):
-    def __init__(self, pluginName: str, pluginRootDir: str,
-                 platform: PeekWorkerPlatformHookABC):
-        PluginCommonEntryHookABC.__init__(self, pluginName=pluginName,
-                                          pluginRootDir=pluginRootDir)
+    def __init__(
+        self, pluginName: str, pluginRootDir: str, platform: PeekWorkerPlatformHookABC
+    ):
+        PluginCommonEntryHookABC.__init__(
+            self, pluginName=pluginName, pluginRootDir=pluginRootDir
+        )
         self._platform = platform
 
     @property
@@ -18,7 +20,7 @@ class PluginWorkerEntryHookABC(PluginCommonEntryHookABC):
 
     @abstractproperty
     def celeryAppIncludes(self) -> [str]:
-        """ Celery App Includes
+        """Celery App Includes
 
         This property returns the absolout package paths to the modules with the tasks
         :Example: ["plugin_noop.worker.NoopWorkerTask"]
