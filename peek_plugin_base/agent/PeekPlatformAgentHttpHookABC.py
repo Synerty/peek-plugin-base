@@ -1,7 +1,6 @@
 from abc import ABCMeta
 
 from txhttputil.site.BasicResource import BasicResource
-from txhttputil.site.FileUnderlayResource import FileUnderlayResource
 
 
 class PeekPlatformAgentHttpHookABC(metaclass=ABCMeta):
@@ -15,7 +14,7 @@ class PeekPlatformAgentHttpHookABC(metaclass=ABCMeta):
     """
 
     def __init__(self):
-        self.__rootAgentResource = FileUnderlayResource()
+        self.__rootAgentResource = BasicResource()
 
     def addAgentExternalApiResource(
         self, pluginSubPath: bytes, resource: BasicResource
