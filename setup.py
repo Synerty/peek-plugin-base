@@ -1,8 +1,8 @@
 import os
 import shutil
-from setuptools import setup
 
 from setuptools import find_packages
+from setuptools import setup
 
 ###############################################################################
 # Define variables
@@ -47,7 +47,7 @@ requirements = [
     "pytmpdir >= 0.2.3",
     # A temporary directory, useful for extracting archives to
     "txhttputil >= 1.0.2",  # Utility class for http requests
-    "vortexpy >= 2.1.3",
+    "vortexpy >= 2.4.1",
     # Data serialisation and transport layer, observable based
     # SOAP interface packages
     "SOAPpy-py3 >= 0.52.24",  # See http://soappy.ooz.ie for tutorials
@@ -74,7 +74,8 @@ requirements = [
 
 setup(
     name=pip_package_name,
-    packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    packages=find_packages(
+        exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     install_requires=requirements,
     zip_safe=False,
     version=package_version,
