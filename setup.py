@@ -33,7 +33,7 @@ if os.path.isfile("MANIFEST"):
 
 requirements = [
     # Database packages
-    "SQLAlchemy >= 1.0.14",  # Database abstraction layer
+    "SQLAlchemy < 1.4.0",  # Database abstraction layer
     "SQLAlchemy-Utils >= 0.32.9",
     "alembic >= 0.8.7",  # Database migration utility
     "GeoAlchemy2",  # Geospatial addons to SQLAlchemy
