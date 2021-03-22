@@ -50,7 +50,7 @@ requirements = [
     "vortexpy >= 2.4.1",
     # Data serialisation and transport layer, observable based
     # SOAP interface packages
-    "SOAPpy-py3 >= 0.52.24",  # See http://soappy.ooz.ie for tutorials
+    "SOAPpy-py3 >= 0.52.26",  # See http://soappy.ooz.ie for tutorials
     "wstools-py3 >= 0.54.2",
     "txsuds-py3 >= 0.5.9",
     # RxPY by Microsoft. Used everywhere
