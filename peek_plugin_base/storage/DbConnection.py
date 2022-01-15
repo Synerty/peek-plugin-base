@@ -10,7 +10,7 @@ from peek_plugin_base.storage.AlembicEnvBase import (
     isMssqlDialect,
     isPostGreSQLDialect,
 )
-from pytmpdir.Directory import Directory
+from pytmpdir.directory_ import Directory
 from sqlalchemy import create_engine, Integer
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import scoped_session
@@ -114,7 +114,9 @@ class DbConnection:
 
         """
         if self._dbEngine is None:
-            self._dbEngine = create_engine(self._dbConnectString, **self._dbEngineArgs)
+            self._dbEngine = create_engine(
+                self._dbConnectString, **self._dbEngineArgs
+            )
 
         return self._dbEngine
 
@@ -215,7 +217,7 @@ class DbConnection:
         dir = Directory()
         file = dir.createTempFile()
 
-        with file.open(write=True) as f:
+        with file.open(write=True, asBin=False) as f:
             f.write(cfg)
 
         return file.namedTempFileReader()
@@ -307,21 +309,24 @@ def _commonPrefetchDeclarativeIds(
     mutex.acquire()
     try:
         sequence = Sequence(
-            "%s_id_seq" % Declarative.__tablename__, schema=Declarative.metadata.schema
+            "%s_id_seq" % Declarative.__tablename__,
+            schema=Declarative.metadata.schema,
         )
 
         if isPostGreSQLDialect(engine):
-            sql = (
-                "SELECT setval('%(seq)s', (select nextval('%(seq)s') + %(add)s), true)"
-            )
-            sql %= {"seq": '"%s"."%s"' % (sequence.schema, sequence.name), "add": count}
+            sql = "SELECT setval('%(seq)s', (select nextval('%(seq)s') + %(add)s), true)"
+            sql %= {
+                "seq": '"%s"."%s"' % (sequence.schema, sequence.name),
+                "add": count,
+            }
             nextStartId = conn.execute(sql).fetchone()[0]
             startId = nextStartId - count
 
         elif isMssqlDialect(engine):
             startId = (
                 conn.execute(
-                    'SELECT NEXT VALUE FOR "%s"."%s"' % (sequence.schema, sequence.name)
+                    'SELECT NEXT VALUE FOR "%s"."%s"'
+                    % (sequence.schema, sequence.name)
                 ).fetchone()[0]
                 + 1
             )

@@ -44,10 +44,11 @@ requirements = [
     # The package for RW support
     "json-cfg-rw",
     # Protocol and data packages
-    "pytmpdir >= 0.2.3",
-    # A temporary directory, useful for extracting archives to
-    "txhttputil >= 1.0.2",  # Utility class for http requests
     "vortexpy >= 2.4.3",
+    # A temporary directory, useful for extracting archives to
+    "pytmpdir>=1.0.0,<1.1.0",
+    # Utility class for http requests
+    "txhttputil>=1.1.0,<1.2.0",
     # Data serialisation and transport layer, observable based
     # SOAP interface packages
     "SOAPpy-py3 >= 0.52.26",  # See http://soappy.ooz.ie for tutorials
@@ -75,7 +76,8 @@ requirements = [
 setup(
     name=pip_package_name,
     packages=find_packages(
-        exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+        exclude=["*.tests", "*.tests.*", "tests.*", "tests"]
+    ),
     install_requires=requirements,
     zip_safe=False,
     version=package_version,
