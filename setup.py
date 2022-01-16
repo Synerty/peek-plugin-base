@@ -48,7 +48,7 @@ requirements = [
     # A temporary directory, useful for extracting archives to
     "pytmpdir>=1.0.0,<1.1.0",
     # Utility class for http requests
-    "txhttputil>=1.1.0,<1.2.0",
+    "txhttputil>=1.1.4,<1.2.0",
     # Data serialisation and transport layer, observable based
     # SOAP interface packages
     "SOAPpy-py3 >= 0.52.26",  # See http://soappy.ooz.ie for tutorials
