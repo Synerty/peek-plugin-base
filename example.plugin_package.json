@@ -51,9 +51,7 @@
         "alembicDir": "alembic"
     },
     // Settings specific to the peek_worker_service service
-    "worker": {
-    },
+    "worker": {},
     // Settings specific to the peek_agent_service service
-    "agent": {
-    }
+    "agent": {}
 }
