@@ -44,7 +44,7 @@ requirements = [
     # The package for RW support
     "json-cfg-rw",
     # Protocol and data packages
-    "vortexpy >= 2.4.3",
+    "vortexpy >= 3.0.0",
     # A temporary directory, useful for extracting archives to
     "pytmpdir>=1.0.0,<1.1.0",
     # Utility class for http requests
