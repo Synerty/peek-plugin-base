@@ -6,13 +6,18 @@ from sqlalchemy.orm.session import Session
 
 from jsoncfg.value_mappers import require_string
 from peek_plugin_base.PluginCommonEntryHookABC import PluginCommonEntryHookABC
-from peek_plugin_base.server.PeekServerPlatformHookABC import PeekServerPlatformHookABC
+from peek_plugin_base.server.PeekServerPlatformHookABC import (
+    PeekServerPlatformHookABC,
+)
 from peek_plugin_base.storage.DbConnection import DbConnection
 
 
 class PluginLogicEntryHookABC(PluginCommonEntryHookABC):
     def __init__(
-        self, pluginName: str, pluginRootDir: str, platform: PeekServerPlatformHookABC
+        self,
+        pluginName: str,
+        pluginRootDir: str,
+        platform: PeekServerPlatformHookABC,
     ):
         PluginCommonEntryHookABC.__init__(
             self, pluginName=pluginName, pluginRootDir=pluginRootDir
@@ -38,6 +43,7 @@ class PluginLogicEntryHookABC(PluginCommonEntryHookABC):
         self._dbConn = DbConnection(
             # Ingore this typing error, it's a bug in pycharm
             dbConnectString=str(self.platform.dbConnectString),
+            dbEngineArgs=self.platform.dbEngineArgs,
             metadata=metadata,
             alembicDir=alembicDir,
         )

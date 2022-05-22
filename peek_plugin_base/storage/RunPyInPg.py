@@ -14,7 +14,11 @@ def runPyInPg(
     **kwargs
 ) -> Any:
     return deferToThreadWrapWithLogger(logger)(runPyInPgBlocking)(
-        dbSessionCreator, classMethodToRun, classMethodToImportTuples, *args, **kwargs
+        dbSessionCreator,
+        classMethodToRun,
+        classMethodToImportTuples,
+        *args,
+        **kwargs
     )
 
 
@@ -28,5 +32,9 @@ def runPyInPgBlocking(
     from peek_storage_service.plpython.RunPyInPg import runPyInPgBlocking
 
     return runPyInPgBlocking(
-        dbSessionCreator, classMethodToRun, classMethodToImportTuples, *args, **kwargs
+        dbSessionCreator,
+        classMethodToRun,
+        classMethodToImportTuples,
+        *args,
+        **kwargs
     )
