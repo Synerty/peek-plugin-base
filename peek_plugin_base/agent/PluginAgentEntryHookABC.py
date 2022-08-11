@@ -1,16 +1,23 @@
 from typing import Optional
 
+from txhttputil.downloader.HttpResourceProxy import HttpResourceProxy
+
 from peek_plugin_base.PluginCommonEntryHookABC import PluginCommonEntryHookABC
-from peek_plugin_base.agent.PeekAgentPlatformHookABC import \
-    PeekAgentPlatformHookABC
+from peek_plugin_base.agent.PeekAgentPlatformHookABC import (
+    PeekAgentPlatformHookABC,
+)
 
 
 class PluginAgentEntryHookABC(PluginCommonEntryHookABC):
-
-    def __init__(self, pluginName: str, pluginRootDir: str,
-                 platform: PeekAgentPlatformHookABC):
-        PluginCommonEntryHookABC.__init__(self, pluginName=pluginName,
-                                          pluginRootDir=pluginRootDir)
+    def __init__(
+        self,
+        pluginName: str,
+        pluginRootDir: str,
+        platform: PeekAgentPlatformHookABC,
+    ):
+        PluginCommonEntryHookABC.__init__(
+            self, pluginName=pluginName, pluginRootDir=pluginRootDir
+        )
         self._platform = platform
 
     @property
@@ -20,3 +27,13 @@ class PluginAgentEntryHookABC(PluginCommonEntryHookABC):
     @property
     def publishedAgentApi(self) -> Optional[object]:
         return None
+
+    def createProxy(self) -> HttpResourceProxy:
+        return HttpResourceProxy(
+            self.platform.peekServerHost,
+            self.platform.peekServerHttpPort,
+            ssl=self.platform.peekServerSSL,
+            sslEnableMutualTLS=self.platform.peekServerSSLEnableMutualTLS,
+            sslClientCertificateBundleFilePath=self.platform.peekServerSSLClientBundleFilePath,
+            sslMutualTLSCertificateAuthorityBundleFilePath=self.platform.peekServerSSLClientMutualTLSCertificateAuthorityBundleFilePath,
+        )

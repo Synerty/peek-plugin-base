@@ -25,3 +25,39 @@ class PeekPlatformServerInfoHookABC(metaclass=ABCMeta):
         :return: The IP address of the server where the peek server service is running.
 
         """
+
+    @property
+    @abstractmethod
+    def peekServerSSL(self) -> bool:
+        """Peek server https
+
+        :return: true or false
+        """
+
+    @property
+    @abstractmethod
+    def peekServerSSLEnableMutualTLS(self) -> bool:
+        """Peek server https with mTLS
+
+        :return: true or false
+        """
+
+    @property
+    @abstractmethod
+    def peekServerSSLClientBundleFilePath(self) -> str:
+        """PEM filepath that contains the key and the certificate of the tls
+        client for mTLS
+
+        :return: the PEM file path
+        """
+
+    @property
+    @abstractmethod
+    def peekServerSSLClientMutualTLSCertificateAuthorityBundleFilePath(
+        self,
+    ) -> str:
+        """PEM filepath that contains certificate authorities used for mTLS to
+         verify the identity of the peek server
+
+        :return: the PEM file path
+        """

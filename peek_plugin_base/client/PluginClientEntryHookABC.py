@@ -7,7 +7,10 @@ from typing import Optional
 from jsoncfg.value_mappers import require_string
 
 from peek_platform import PeekPlatformConfig
+from txhttputil.downloader.HttpResourceProxy import HttpResourceProxy
+
 from peek_plugin_base.PluginCommonEntryHookABC import PluginCommonEntryHookABC
+
 from peek_plugin_base.client.PeekClientPlatformHookABC import (
     PeekClientPlatformHookABC,
 )
@@ -63,3 +66,13 @@ class PluginClientEntryHookABC(PluginCommonEntryHookABC):
 
     def copyFolder(self, srcDir: Path, dstDir: Path):
         shutil.copytree(srcDir, dstDir, dirs_exist_ok=True)
+
+    def createProxy(self) -> HttpResourceProxy:
+        return HttpResourceProxy(
+            self.platform.peekServerHost,
+            self.platform.peekServerHttpPort,
+            ssl=self.platform.peekServerSSL,
+            sslEnableMutualTLS=self.platform.peekServerSSLEnableMutualTLS,
+            sslClientCertificateBundleFilePath=self.platform.peekServerSSLClientBundleFilePath,
+            sslMutualTLSCertificateAuthorityBundleFilePath=self.platform.peekServerSSLClientMutualTLSCertificateAuthorityBundleFilePath,
+        )
