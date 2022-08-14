@@ -44,11 +44,11 @@ requirements = [
     # The package for RW support
     "json-cfg-rw",
     # Protocol and data packages
-    "vortexpy >= 3.0.0",
+    "vortexpy",
     # A temporary directory, useful for extracting archives to
-    "pytmpdir>=1.0.0,<1.1.0",
+    "pytmpdir",
     # Utility class for http requests
-    "txhttputil>=1.1.4,<1.2.0",
+    "txhttputil",
     # Data serialisation and transport layer, observable based
     # SOAP interface packages
     "SOAPpy-py3 >= 0.52.26",  # See http://soappy.ooz.ie for tutorials
