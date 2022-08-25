@@ -71,8 +71,9 @@ class PluginClientEntryHookABC(PluginCommonEntryHookABC):
         return HttpResourceProxy(
             self.platform.peekServerHost,
             self.platform.peekServerHttpPort,
-            ssl=self.platform.peekServerSSL,
+            useSsl=self.platform.peekServerSSL,
             sslEnableMutualTLS=self.platform.peekServerSSLEnableMutualTLS,
             sslClientCertificateBundleFilePath=self.platform.peekServerSSLClientBundleFilePath,
             sslMutualTLSCertificateAuthorityBundleFilePath=self.platform.peekServerSSLClientMutualTLSCertificateAuthorityBundleFilePath,
+            sslMutualTLSTrustedPeerCertificateBundleFilePath=self.platform.peekServerSSLMutualTLSTrustedPeerCertificateBundleFilePath,
         )

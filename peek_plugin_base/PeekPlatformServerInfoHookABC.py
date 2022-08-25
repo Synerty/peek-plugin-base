@@ -61,3 +61,11 @@ class PeekPlatformServerInfoHookABC(metaclass=ABCMeta):
 
         :return: the PEM file path
         """
+
+    @property
+    @abstractmethod
+    def peekServerSSLMutualTLSTrustedPeerCertificateBundleFilePath(self) -> str:
+        """PEM filepath that contains trusted peer certificates
+
+        :return: the PEM file path
+        """
