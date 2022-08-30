@@ -1,13 +1,14 @@
+import glob
 import logging
 from collections import deque
 from collections import namedtuple
 from pathlib import Path
 from typing import Deque
+from typing import Dict
 
+import patch_ng
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 
-from peek_platform.util.PtyUtil import SpawnOsCommandException
-from peek_plugin_base.util.build_common.BuilderOsCmd import runCommand
 from peek_plugin_base.util.build_common.BuilderOsCmd import runNgBuild
 from peek_plugin_base.util.build_frontend.FrontendFileSync import (
     FrontendFileSync,
@@ -45,11 +46,16 @@ class EdnarWebBuilder(WebBuilder):
         self._jsonCfg = jsonCfg
         self.fileSync = FrontendFileSync(lambda f, c: self._syncFileHook(f, c))
         self._patchTasks: Deque[PatchItem] = deque()
-        self._patchRejectedFile: Path = Path(self._frontendProjectDir) / Path(
-            "./PATCH_REJECTED.rej"
-        )
-        if self._patchRejectedFile.exists():
-            self._patchRejectedFile.unlink()
+        self._patchBackupFileSearchFolder = Path(
+            self._frontendProjectDir
+        ) / Path("./src")
+
+        for patchBackupFile in glob.glob(
+            f"{self._frontendProjectDir}/**/*.orig", recursive=True
+        ):
+            Path(patchBackupFile).unlink()
+
+        self._patchResults: Dict[PatchItem, bool] = {}
 
     def _syncFileHook(self, fileName: str, contents: bytes) -> bytes:
         for patchItem in self.PATCH_ITEMS:
@@ -58,31 +64,22 @@ class EdnarWebBuilder(WebBuilder):
         return contents
 
     def _patchFiles(self):
-        # apply patches
-        #  patch src/@peek/peek_core_device/device-enrolment.service.ts \
-        # patch/device-enrolment.service.ts.diff
-
-        # patch src/@peek/peek_plugin_diagram/_private/branch/PrivateDiagramBranchContext.ts \
-        # patch/PrivateDiagramBranchContext.ts.diff
-
-        # patch src/@_peek/peek_plugin_enmac_diagram/pofDiagram.module.ts \
-        #  patch/pofDiagram.module.ts.diff
         while self._patchTasks:
             patchItem = self._patchTasks.popleft()
-            # patch diff and ignore previously patched
-            #  https://stackoverflow.com/a/52967701
-            command = (
-                f"patch -p0 --forward -r PATCH_REJECTED.rej"
-                f" {patchItem.target}"
-                f" {patchItem.patch}"
+            self._patchResults[patchItem] = False
+
+            # https://github.com/conan-io/python-patch-ng/blob/master/example/example.py
+            patchFilePath = Path(self._frontendProjectDir) / Path(
+                patchItem.patch
             )
-            try:
-                runCommand(self._frontendProjectDir, command.split())
-            except SpawnOsCommandException as e:
-                if self._patchRejectedFile.exists():
-                    logger.error(f"patch rejected {patchItem.patch}")
-                else:
-                    logger.debug(f"patch previously applied {patchItem.patch}")
+            patch = patch_ng.fromfile(patchFilePath)
+
+            targetFileParentFolderPath = (
+                Path(self._frontendProjectDir) / Path(patchItem.target).parent
+            )
+
+            result = patch.apply(root=targetFileParentFolderPath, strip=0)
+            self._patchResults[patchItem] = result
 
     @deferToThreadWrapWithLogger(logger, checkMainThread=False)
     def build(self):
@@ -111,6 +108,7 @@ class EdnarWebBuilder(WebBuilder):
 
         baseSrcDir = Path(peek_office_app.__file__).parent / Path("./src")
 
+        self._patchResults = {}
         for moduleName in ["@_peek", "@peek"]:
             srcDir = baseSrcDir / Path(f"./{moduleName}")
             dstDir = Path(self._frontendProjectDir) / Path(
@@ -126,6 +124,12 @@ class EdnarWebBuilder(WebBuilder):
             )
 
         self.fileSync.syncFiles()
+        logger.info(
+            f"EDNAR web custom build has been patched in "
+            f"{len(self._patchResults)} files - "
+            f"{list(self._patchResults.values()).count(True)} success, "
+            f"{list(self._patchResults.values()).count(False)} fails"
+        )
 
         if self._jsonCfg.feSyncFilesForDebugEnabled:
             logger.info(
