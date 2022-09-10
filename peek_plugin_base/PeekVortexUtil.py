@@ -27,3 +27,10 @@ peekAdminName = "peek-admin-app"
 
 # The vortex name group for the Peek the client service names
 peekBackendNames = (peekFieldName, peekOfficeName)
+
+peekVortexClientServiceNames = (
+    peekFieldName,
+    peekOfficeName,
+    peekAgentName,
+    peekWorkerName,
+)
