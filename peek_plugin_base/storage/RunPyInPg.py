@@ -9,7 +9,7 @@ def runPyInPg(
     logger: Logger,
     dbSessionCreator: DbSessionCreator,
     classMethodToRun: Callable,
-    classMethodToImportTuples: Optional[Callable],
+    classMethodToImportTuples: Optional[Callable] = None,
     *args,
     **kwargs
 ) -> Any:
@@ -25,7 +25,7 @@ def runPyInPg(
 def runPyInPgBlocking(
     dbSessionCreator: DbSessionCreator,
     classMethodToRun: Any,
-    classMethodToImportTuples: Optional[Callable],
+    classMethodToImportTuples: Optional[Callable] = None,
     *args,
     **kwargs
 ) -> Any:
