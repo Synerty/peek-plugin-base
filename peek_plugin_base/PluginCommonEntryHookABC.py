@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import Any
 
 from jsoncfg.value_mappers import require_string
 
@@ -41,6 +42,15 @@ class PluginCommonEntryHookABC(metaclass=ABCMeta):
 
         This will be called when the plugin is loaded, just after the db is migrated.
         Place any custom initialiastion steps here.
+
+        """
+
+    @classmethod
+    def setupStaticWebResources(cls, platformApi: Any):
+        """Setup Static Web Resources
+
+        This method is called during the load/start stage of a plugin.
+        This must server
 
         """
 
