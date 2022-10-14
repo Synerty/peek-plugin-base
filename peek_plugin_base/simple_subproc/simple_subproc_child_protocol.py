@@ -20,7 +20,7 @@ from peek_plugin_base.simple_subproc.simple_subproc_task_result_tuple import (
 )
 
 
-logger = logging.getLogger("child_protocol")
+logger = logging.getLogger("simple_subproc_child_protocol")
 
 
 class SimpleSubprocChildProtocol(protocol.Protocol):

@@ -14,7 +14,7 @@ from .simple_subproc_task_constructor_tuple import (
 )
 from .simple_subproc_task_result_tuple import SimpleSubprocTaskResultTuple
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("simple_subproc_parent_protocol")
 
 
 class SimpleSubprocParentProtocol(protocol.ProcessProtocol):
