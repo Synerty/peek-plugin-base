@@ -46,7 +46,7 @@ class SimpleSubprocChildProtocol(protocol.Protocol):
             yield self._runTask(message)
 
     def connectionLost(self, reason: failure.Failure = connectionDone):
-        logger.debug("STDIN closed, we'll stop " "the reactor in 5 seconds")
+        logger.debug("STDIN closed, we'll stop the reactor in 5 seconds")
         reactor.callLater(5, reactor.stop)
 
     def _constructClass(self, message: bytes):
@@ -69,7 +69,7 @@ class SimpleSubprocChildProtocol(protocol.Protocol):
             )
 
         except Exception as e:
-            logger.error(str(e))
+            logger.exception(str(e))
             resultTuple = SimpleSubprocTaskResultTuple(
                 commandUuid=importCommandTuple.commandUuid, exceptionStr=str(e)
             )
