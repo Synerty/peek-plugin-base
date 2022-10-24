@@ -61,6 +61,8 @@ requirements = [
     "pytz",
     "tzlocal",
     "patch-ng >=1.17.4,<2.0",
+    # Set process title
+    "setproctitle",
 ]
 
 ###############################################################################
