@@ -1,6 +1,7 @@
 import logging
 import sys
 
+from setproctitle import setproctitle
 from twisted.internet import reactor
 from twisted.internet._posixstdio import StandardIO
 
@@ -15,6 +16,7 @@ logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
 
 
 if __name__ == "__main__":
+    setproctitle("peek simple_subproc_example")
     # Create a class to construct.
     StandardIO(SimpleSubprocChildProtocol(ExampleSubprocClass))
 
