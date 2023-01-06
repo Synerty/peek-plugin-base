@@ -85,7 +85,7 @@ class PeekPsUtil:
         conns = [
             c
             for c in self.__process.connections()
-            if c.status == "ESTABLISHED" and c.raddr.port > 40000
+            if c.status == "ESTABLISHED" and c.raddr.port > 30000
         ]
         connCount = defaultdict(lambda: 0)
         for c in conns:
