@@ -8,6 +8,7 @@ import pytz
 from twisted.internet.task import LoopingCall
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.DeferUtil import vortexLogFailure
+from vortex.VortexFactory import VortexFactory
 
 from peek_plugin_base.LoopingCallUtil import peekCatchErrbackWithLogger
 
@@ -17,6 +18,8 @@ logger = logging.getLogger(__name__)
 class PeekPsUtil:
     # For the CPU load, we should be polling regularly to get an accurate result
     __LOOPING_CALL_PERIOD = 1.0
+    __STATS_LOGGING_PERIOD = 60.0
+
     # Singleton
     _instance = None
 
@@ -50,7 +53,7 @@ class PeekPsUtil:
         diff = (
             datetime.now(pytz.utc) - self.__lastStatsLogDateTime
         ).total_seconds()
-        if diff < 60:
+        if diff < self.__STATS_LOGGING_PERIOD:
             return
 
         self.__lastStatsLogDateTime = datetime.now(pytz.utc)
@@ -93,12 +96,14 @@ class PeekPsUtil:
         duplicates = ", ".join(
             ["%s * %s" % (v, k) for k, v in connCount.items() if v != 1]
         )
+
         logger.info(
-            "We have %s connections, " % len(conns)
+            f"We have {len(conns)} netstat connections,"
+            f" {VortexFactory.getInboundConnectionCount()} vortex connections,"
             + (
-                "with duplicates: %s" % duplicates
+                " with netstat duplicates: %s" % duplicates
                 if duplicates
-                else "with no duplicates"
+                else " with no duplicates"
             )
         )
 
