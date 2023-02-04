@@ -35,7 +35,9 @@ def setConnStringForWindows():
     )
     from peek_platform import PeekPlatformConfig
 
-    class _WorkerTaskConfigMixin(PeekFileConfigABC, PeekFileConfigSqlAlchemyMixin):
+    class _WorkerTaskConfigMixin(
+        PeekFileConfigABC, PeekFileConfigSqlAlchemyMixin
+    ):
         pass
 
     PeekPlatformConfig.componentName = peekWorkerName
@@ -47,6 +49,8 @@ def setConnStringForWindows():
 # For celery, an engine is created per worker
 def getDbEngine():
     global __dbEngine
+    global _dbConnectString
+    global _dbEngineArgs
 
     if _dbConnectString is None:
         if _isWindows:
