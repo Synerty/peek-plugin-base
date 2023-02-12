@@ -60,13 +60,16 @@ class PluginClientEntryHookABC(PluginCommonEntryHookABC):
             raise NotADirectoryError(dir)
         return dir
 
+    # TODO: Remove this, Plugins should access platform config via self.platform
     @property
     def platformConfig(self):
         return PeekPlatformConfig.config
 
+    # TODO, Remove this
     def copyFolder(self, srcDir: Path, dstDir: Path):
         shutil.copytree(srcDir, dstDir, dirs_exist_ok=True)
 
+    # TODO, Move this to PeekClientPlatformHookABC
     def createProxy(self) -> HttpResourceProxy:
         return HttpResourceProxy(
             self.platform.peekServerHost,
