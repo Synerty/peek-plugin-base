@@ -75,7 +75,19 @@ class DbConnection:
 
         self._dbEngine = None
         self._ScopedSession = None
-        self._dbEngineArgs = dbEngineArgs if dbEngineArgs else {"echo": False}
+        self._dbEngineArgs = (
+            dbEngineArgs
+            if dbEngineArgs
+            else {
+                "client_encoding": "utf8",
+                "echo": False,
+                "executemany_mode": "batch",
+                "max_overflow": 50,
+                "pool_recycle": 3540,
+                "pool_size": 5,
+                "pool_timeout": 60,
+            }
+        )
 
         self._sequenceMutex = Lock()
 
