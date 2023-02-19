@@ -1,10 +1,13 @@
 import logging
+import traceback
 from io import StringIO
 from textwrap import dedent
 from threading import Lock
 from typing import Optional, Dict, Union, Callable, Iterable
 
 import sqlalchemy_utils
+from vortex.DeferUtil import isMainThread
+
 from peek_plugin_base.storage.AlembicEnvBase import (
     ensureSchemaExists,
     isMssqlDialect,
@@ -90,6 +93,24 @@ class DbConnection:
 
     @property
     def ormSessionCreator(self) -> DbSessionCreator:
+        sessionCreator = self.__ormSessionCreator
+
+        def call():
+            if isMainThread():
+                logger.warning(
+                    "This plugin has called"
+                    " SQLAlchemy code in the main thread,"
+                    " this is very bad"
+                )
+                for line in traceback.format_stack():
+                    logger.debug(line.strip().replace("\n", ""))
+
+            return sessionCreator()
+
+        return call
+
+    @property
+    def __ormSessionCreator(self) -> DbSessionCreator:
         """Get Orm Session
 
         :return: A SQLAlchemy session scoped for the callers thread..
