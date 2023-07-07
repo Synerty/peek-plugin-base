@@ -1,6 +1,6 @@
 import logging
 from alembic import context
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import engine_from_config, pool, text
 from sqlalchemy.dialects.mssql.base import MSDialect
 from sqlalchemy.dialects.postgresql.base import PGDialect
 
@@ -17,13 +17,16 @@ def isPostGreSQLDialect(engine):
 
 def ensureSchemaExists(engine, schemaName):
     # Ensure the schema exists
-    if isinstance(engine.dialect, MSDialect):
-        if list(engine.execute("SELECT SCHEMA_ID('%s')" % schemaName))[0][0] is None:
-            engine.execute("CREATE SCHEMA [%s]" % schemaName)
-    elif isinstance(engine.dialect, PGDialect):
-        engine.execute('CREATE SCHEMA IF NOT EXISTS "%s" ' % schemaName)
-    else:
-        raise Exception("unknown dialect %s" % engine.dialect)
+    with engine.connect() as conn:
+        if isinstance(conn.dialect, MSDialect):
+            if list(conn.execute(text("SELECT SCHEMA_ID('%s')" % schemaName)))[0][0] is None:
+                conn.execute(text("CREATE SCHEMA [%s]" % schemaName))
+                conn.commit()
+        elif isinstance(conn.dialect, PGDialect):
+            conn.execute(text('CREATE SCHEMA IF NOT EXISTS "%s" ' % schemaName))
+            conn.commit()
+        else:
+            raise Exception("unknown dialect %s" % conn.dialect)
 
 
 class AlembicEnvBase:
@@ -50,6 +53,7 @@ class AlembicEnvBase:
             self._config.get_section(self._config.config_ini_section),
             prefix="sqlalchemy.",
             poolclass=pool.NullPool,
+            client_encoding="utf8",
         )
         with connectable.connect() as connection:
             ensureSchemaExists(connectable, self._schemaName)
