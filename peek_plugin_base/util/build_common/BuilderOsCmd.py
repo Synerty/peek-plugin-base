@@ -8,7 +8,7 @@ from peek_platform.util.PtyUtil import PtyOutParser, spawnPty, logSpawnException
 logger = logging.getLogger(__name__)
 
 NG_BUILD_ARGS = (
-    "ng build --prod --optimization  --common-chunk --vendor-chunk".split()
+    "ng build --configuration production --optimization  --common-chunk --vendor-chunk".split()
 )
 
 

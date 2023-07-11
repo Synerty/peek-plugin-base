@@ -138,9 +138,9 @@ class EdnarWebBuilder(WebBuilder):
             self.fileSync.startFileSyncWatcher()
 
         if self._jsonCfg.feWebBuildEnabled:
-            # ng build --prod --output-hashing none --base-href ./
+            # ng build --configuration production --output-hashing none --base-href ./
             ngArgs = (
-                f"ng build --prod --output-hashing none --base-href ./"
+                f"ng build --configuration production --output-hashing none --base-href ./"
                 f" --output-path {self._outputPath}".split()
             )
             runNgBuild(
