@@ -55,7 +55,7 @@ requirements = [
     "txsuds-py3 >= 0.5.9",
     # RxPY by Microsoft. Used everywhere
     # TODO Upgrade to rx 3.x.x
-    "rx",
+    "reactivex>=4.0.4",
     # Improve datetime support
     "pytz",
     "tzlocal",
