@@ -33,8 +33,7 @@ if os.path.isfile("MANIFEST"):
 
 requirements = [
     # Database packages
-    "SQLAlchemy < 1.4.0",  # Database abstraction layer
-    "SQLAlchemy-Utils >= 0.32.9",
+    "SQLAlchemy",  # Database abstraction layer
     "alembic >= 0.8.7",  # Database migration utility
     "GeoAlchemy2",  # Geospatial addons to SQLAlchemy
     # networking and async framework. Peek is based on Twisted.
@@ -56,11 +55,11 @@ requirements = [
     "txsuds-py3 >= 0.5.9",
     # RxPY by Microsoft. Used everywhere
     # TODO Upgrade to rx 3.x.x
-    "rx < 3.0.0",
+    "reactivex>=4.0.4",
     # Improve datetime support
     "pytz",
     "tzlocal",
-    "patch-ng >=1.17.4,<2.0",
+    "patch-ng >=1.17.4",
     # Set process title
     "setproctitle",
 ]

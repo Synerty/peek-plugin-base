@@ -5,7 +5,6 @@ from textwrap import dedent
 from threading import Lock
 from typing import Optional, Dict, Union, Callable, Iterable
 
-import sqlalchemy_utils
 from vortex.DeferUtil import isMainThread
 
 from peek_plugin_base.storage.AlembicEnvBase import (
@@ -30,6 +29,41 @@ DbSessionCreator = Callable[[], Session]
 DelcarativeIdGen = Optional[Iterable[int]]
 DeclarativeIdCreator = Callable[[object, int], DelcarativeIdGen]
 
+def _non_indexed_foreign_keys(metadata, engine=None):
+    """
+    Finds all non indexed foreign keys from all tables of given MetaData.
+
+    Very useful for optimizing postgresql database and finding out which
+    foreign keys need indexes.
+
+    :param metadata: MetaData object to inspect tables from
+    """
+    reflected_metadata = MetaData()
+
+    bind = getattr(metadata, 'bind', None)
+    if bind is None and engine is None:
+        raise Exception(
+            'Either pass a metadata object with bind or '
+            'pass engine as a second parameter'
+        )
+
+    constraints = defaultdict(list)
+
+    for table_name in metadata.tables.keys():
+        table = Table(
+            table_name,
+            reflected_metadata,
+            autoload_with=bind or engine
+        )
+
+        for constraint in table.constraints:
+            if not isinstance(constraint, ForeignKeyConstraint):
+                continue
+
+            if not has_index(constraint):
+                constraints[table.name].append(constraint)
+
+    return dict(constraints)
 
 class DbConnection:
     def __init__(
@@ -81,7 +115,6 @@ class DbConnection:
             else {
                 "client_encoding": "utf8",
                 "echo": False,
-                "executemany_mode": "batch",
                 "max_overflow": 50,
                 "pool_recycle": 3540,
                 "pool_size": 5,
@@ -158,7 +191,6 @@ class DbConnection:
 
         Perform a database migration, upgrading to the latest schema level.
         """
-
         assert self.ormSessionCreator, "ormSessionCreator is not defined"
 
         connection = self._dbEngine.connect()
@@ -183,7 +215,7 @@ class DbConnection:
         This is a performance issue.
 
         """
-        missing = sqlalchemy_utils.functions.non_indexed_foreign_keys(
+        missing = _non_indexed_foreign_keys(
             self._metadata, engine=engine
         )
 
